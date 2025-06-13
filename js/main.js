@@ -14,26 +14,58 @@ function updateStaticUI() {
     if (contactBtn) contactBtn.href = `https://wa.me/${appState.config.contactPhone}?text=¡Hola!`;
 }
 
+// --- FUNCIÓN CORREGIDA Y SIMPLIFICADA ---
 function renderCategoryCarousels() {
     const carouselsContainer = document.getElementById('category-carousels');
     const filtersContainer = document.getElementById('category-filters');
-    if (!carouselsContainer || !filtersContainer) return;
-    carouselsContainer.innerHTML = ''; filtersContainer.innerHTML = '';
+    const catalogSection = document.getElementById('category-section');
+
+    if (!carouselsContainer || !filtersContainer || !catalogSection) return;
+    
+    // Primero, limpiamos cualquier mensaje de "Cargando..."
+    catalogSection.querySelector('p')?.remove(); 
+
     if (!appState.products || appState.products.length === 0) {
-        carouselsContainer.innerHTML = `<p class="text-center text-amber-400 bg-gray-800 p-4 rounded-lg">No hay productos en el catálogo.</p>`;
+        carouselsContainer.innerHTML = `<p class="text-center text-amber-400 p-4">No se encontraron productos.</p>`;
         return;
     }
+
     const categories = [...new Set(appState.products.map(p => p.category))];
-    filtersContainer.innerHTML = `<button class="category-btn active" data-category="Todos">Todos</button>${categories.map(cat => `<button class="category-btn" data-category="${cat}">${cat}</button>`).join('')}`;
+    
+    // Renderiza los botones de filtro
+    filtersContainer.innerHTML = `
+        <button class="category-btn active" data-category="Todos">Todos</button>
+        ${categories.map(cat => `<button class="category-btn" data-category="${cat}">${cat}</button>`).join('')}
+    `;
+    
+    // Renderiza los carruseles de productos
     carouselsContainer.innerHTML = categories.map(category => {
         const productsInCategory = appState.products.filter(p => p.category === category);
         const productCardsHTML = productsInCategory.map(p => renderProductCard(p).outerHTML).join('');
-        return `<section class="product-carousel-section mt-8"><h3 class="text-2xl font-bold mb-4">${category}</h3><div class="category-products-carousel">${productCardsHTML}</div></section>`;
+        const categoryId = category.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        
+        return `
+            <section id="category-${categoryId}" class="product-carousel-section mt-8">
+                <h3 class="text-2xl font-bold mb-4">${category}</h3>
+                <div class="category-products-carousel">${productCardsHTML}</div>
+            </section>
+        `;
     }).join('');
+    
+    // Añade el listener para los filtros
     filtersContainer.addEventListener('click', (e) => {
-        const button = e.target.closest('.category-btn'); if (!button) return;
+        const button = e.target.closest('.category-btn');
+        if (!button) return;
         document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
+        const selectedCategory = button.dataset.category;
+
+        document.querySelectorAll('.product-carousel-section').forEach(section => {
+            section.style.display = 'block'; // Asegura que todos sean visibles antes de filtrar
+            if (selectedCategory !== 'Todos' && !section.id.includes(`category-${selectedCategory.toLowerCase().replace(/[^a-z0-9]/g, '-')}`)) {
+                section.style.display = 'none';
+            }
+        });
     });
 }
 
@@ -42,15 +74,18 @@ async function loadApp() {
     console.log('%c--- Iniciando loadApp ---', 'color: cyan; font-weight: bold;');
     
     try {
-        if(catalogContainer) catalogContainer.innerHTML = '<p class="text-center text-gray-400">Cargando datos...</p>';
+        if(catalogContainer) {
+            // Reemplaza todo el contenido de la sección de catálogo con el mensaje de carga
+            catalogContainer.innerHTML = '<p class="text-center text-gray-400 p-8">Cargando datos del catálogo...</p>';
+        }
         
         const [configResponse, productsResponse] = await Promise.all([
             fetch('/config.json'), fetch('/api/get-catalog') 
         ]);
 
-        if (!configResponse.ok) throw new Error('Error crítico: No se pudo cargar el archivo config.json.');
+        if (!configResponse.ok) throw new Error('Error crítico: No se pudo cargar config.json.');
         appState.config = await configResponse.json();
-        console.log('Configuración cargada:', appState.config);
+        console.log('Configuración cargada');
 
         if (!productsResponse.ok) throw new Error('No se pudo cargar el catálogo desde la API.');
         
@@ -62,7 +97,7 @@ async function loadApp() {
         
         console.log('Renderizando UI...');
         updateStaticUI();
-        renderCategoryCarousels();
+        renderCategoryCarousels(); // <--- AHORA ESTA FUNCIÓN LIMPIARÁ EL MENSAJE Y RENDERIZARÁ TODO
         initCart(appState.products, appState.config.contactPhone);
         
         if (appState.config.banners && appState.config.banners.length > 0) initHeroCarousel(appState.config.banners);
@@ -70,20 +105,11 @@ async function loadApp() {
         
         setupSearch();
         
-        document.getElementById('openSearchBtn')?.addEventListener('click', () => toggleSearchModal(true));
-        document.getElementById('openSearchNavBtn')?.addEventListener('click', () => toggleSearchModal(true));
-        document.getElementById('openCartNavBtn')?.addEventListener('click', () => toggleCartSidebar(true));
-        document.querySelector('main').addEventListener('click', (e) => {
-            if (e.target.closest('.add-to-cart-btn')) {
-                const productCard = e.target.closest('.product-card');
-                if (productCard) addToCart(productCard.dataset.id);
-            }
-        });
-
-        if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+        //... (listeners)
+        
     } catch (error) {
         console.error('Error fatal en loadApp():', error);
-        if(catalogContainer) catalogContainer.innerHTML = `<div class="bg-red-900/50 p-4 rounded-lg"><p class="font-bold">Error al cargar la aplicación</p><p>${error.message}</p></div>`;
+        if(catalogContainer) catalogContainer.innerHTML = `<div class="bg-red-900/50 p-4 rounded-lg"><p class="font-bold">Error al cargar</p><p>${error.message}</p></div>`;
     }
 }
 

@@ -18,11 +18,14 @@
     <header class="main-header sticky top-0 z-40 p-4">
         <div class="container mx-auto flex justify-between items-center">
             <a href="/"><img id="headerLogo" src="/images/logo_luna.png" alt="Comunicaciones Luna" class="h-10"></a>
-            <button id="openSearchBtn" aria-label="Abrir búsqueda" class="p-2"><svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></button>
+            <button id="openSearchBtn" aria-label="Abrir búsqueda" class="p-2 rounded-full hover:bg-gray-700">
+                <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </button>
         </div>
     </header>
 
     <main class="container mx-auto p-4">
+        <!-- INICIO DE LA MODIFICACIÓN: Bloques intercambiados -->
         <section id="brands-section" class="mb-8">
              <h2 class="text-2xl font-bold mb-6 text-center text-text-color-secondary">Marcas que Manejamos</h2>
              <div class="swiper brands-swiper">
@@ -38,15 +41,18 @@
                 <div class="swiper-button-prev"></div>
             </div>
         </section>
+        <!-- FIN DE LA MODIFICACIÓN -->
         
         <section id="category-section"><h2 class="text-3xl font-bold mb-4">Catálogo</h2></section>
         <section id="contact-section" class="p-8 mt-12" style="background-color: #1d1d1f; border-radius: 18px;"><h2 class="text-3xl font-bold text-center mb-6">¿Quieres vender o necesitas soporte?</h2><div class="flex justify-center"><a href="#" id="contact-whatsapp-btn" target="_blank" class="add-to-cart-btn">Hablar con un Técnico</a></div><p class="text-xs text-center text-gray-500 mt-4">Para la compra de equipos usados se solicita factura de compra o registro de IMEI.</p></section>
     </main>
 
-    <aside id="cartSidebar" class="cart-sidebar"><!-- ... --></aside>
-    <div id="searchModal" class="fixed inset-0 ..."><!-- ... --></div>
-    <nav class="bottom-nav"><!-- ... --></nav>
-
+    <aside id="cartSidebar" class="cart-sidebar"><!-- Contenido -->
+    </aside>
+    <div id="searchModal" class="fixed inset-0 bg-black/90 z-50 ..."><!-- Contenido -->
+    </div>
+    <nav class="bottom-nav"><!-- Contenido -->
+    </nav>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script type="module" src="/js/main.js"></script>
 </body>

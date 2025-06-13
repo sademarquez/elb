@@ -3,7 +3,7 @@ import { initHeroCarousel, initBrandsCarousel } from './carousels.js';
 import { renderProductCard } from './products.js';
 import { setupSearch, toggleSearchModal } from './search.js';
 import { appState } from './state.js';
-import { initWelcomeModal } from './welcome-modal.js'; // CAMBIO: Nueva importación
+import { initWelcomeModal } from './welcome-modal.js';
 
 function updateStaticUI() {
     const siteTitle = document.getElementById('siteTitle');
@@ -16,10 +16,7 @@ function updateStaticUI() {
 
 function renderCategoryCarousels() {
     const catalogSection = document.getElementById('category-section');
-    if (!catalogSection) {
-        console.error("No se encontró #category-section.");
-        return;
-    }
+    if (!catalogSection) return;
 
     catalogSection.innerHTML = `
         <h2 class="text-3xl font-bold mb-4">Catálogo</h2>
@@ -36,7 +33,6 @@ function renderCategoryCarousels() {
     }
     
     const categories = [...new Set(appState.products.map(p => p.category))];
-    
     let filtersHTML = `<button class="category-btn active" data-category="Todos">Todos</button>`;
     categories.forEach(cat => {
         const emoji = cat.split(' ')[0];
@@ -49,29 +45,18 @@ function renderCategoryCarousels() {
         const productsInCategory = appState.products.filter(p => p.category === category);
         const productCardsHTML = productsInCategory.map(p => renderProductCard(p).outerHTML).join('');
         const categoryId = category.toLowerCase().replace(/[^a-z0-9]/g, '-');
-        
-        allCarouselsHTML += `
-            <section id="category-${categoryId}" class="product-carousel-section mt-8">
-                <h3 class="text-2xl font-bold mb-2 flex items-center gap-3">${category}</h3>
-                <div class="category-products-carousel">${productCardsHTML}</div>
-            </section>
-        `;
+        allCarouselsHTML += `<section id="category-${categoryId}" class="product-carousel-section mt-8"><h3 class="text-2xl font-bold mb-2 flex items-center gap-3">${category}</h3><div class="category-products-carousel">${productCardsHTML}</div></section>`;
     });
     carouselsContainer.innerHTML = allCarouselsHTML;
     
     filtersContainer.addEventListener('click', (e) => {
-        const button = e.target.closest('.category-btn');
-        if (!button) return;
+        const button = e.target.closest('.category-btn'); if (!button) return;
         document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
         const selectedCategory = button.dataset.category;
         document.querySelectorAll('.product-carousel-section').forEach(section => {
             const categoryId = selectedCategory.toLowerCase().replace(/[^a-z0-9]/g, '-');
-            if (selectedCategory === 'Todos') {
-                section.style.display = 'block';
-            } else {
-                section.style.display = section.id === `category-${categoryId}` ? 'block' : 'none';
-            }
+            section.style.display = (selectedCategory === 'Todos' || section.id === `category-${categoryId}`) ? 'block' : 'none';
         });
     });
 }
@@ -97,28 +82,38 @@ async function loadApp() {
         if (appState.config.brands) initBrandsCarousel(appState.config.brands);
         setupSearch();
         
+        // Setup all event listeners in one go
         document.getElementById('openSearchBtn')?.addEventListener('click', () => toggleSearchModal(true));
         document.getElementById('openSearchNavBtn')?.addEventListener('click', () => toggleSearchModal(true));
         document.getElementById('openCartNavBtn')?.addEventListener('click', () => toggleCartSidebar(true));
-        document.querySelector('main').addEventListener('click', (e) => {
-            const addToCartButton = e.target.closest('.add-to-cart-btn');
-            if (addToCartButton) {
-                const productCard = addToCartButton.closest('.product-card');
+        document.querySelector('main')?.addEventListener('click', (e) => {
+            if (e.target.closest('.add-to-cart-btn')) {
+                const productCard = e.target.closest('.product-card');
                 if (productCard) addToCart(productCard.dataset.id);
             }
         });
+
     } catch (error) {
         const catalogContainer = document.getElementById('category-section');
         if(catalogContainer) catalogContainer.innerHTML = `<div class="bg-red-900/50 p-4"><p>${error.message}</p></div>`;
     }
 }
 
-// CAMBIO: La función init() ahora llama a initWelcomeModal.
-function init() {
-    initWelcomeModal(loadApp); 
+// --- PUNTO DE ENTRADA PRINCIPAL ---
+function main() {
+    // 1. Inicializa el modal de bienvenida y le pasa la función que debe ejecutar al continuar.
+    initWelcomeModal(loadApp);
+    
+    // 2. Registra el Service Worker una vez que toda la ventana ha cargado.
+    if ('serviceWorker' in navigator) { 
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('Service Worker registrado con éxito.', reg))
+                .catch(err => console.error('Fallo al registrar el Service Worker:', err));
+        });
+    }
 }
-document.addEventListener('DOMContentLoaded', init);
 
-if ('serviceWorker' in navigator) { 
-    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
-}
+// Escucha el evento que indica que el HTML ha sido completamente cargado y parseado,
+// luego ejecuta la función principal.
+document.addEventListener('DOMContentLoaded', main);

@@ -1,7 +1,14 @@
+# Configuración principal del build
 [build]
-  command = ""
+  # Directorio que Netlify debe publicar.
+  # Si tu index.html está en la raíz, este es el directorio correcto.
   publish = "/"
+  
+  # Directorio donde se encuentran tus funciones serverless.
+  functions = "netlify/functions/"
 
-[functions]
-  directory = "netlify/functions/"
-  node_bundler = "esbuild"
+# Redirecciones para que las llamadas a la API funcionen correctamente
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200

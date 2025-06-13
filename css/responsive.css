@@ -1,45 +1,61 @@
 @media (max-width: 768px) {
-    /* El header ahora es visible en móviles por defecto. */
-    
-    /* Ajustar la posición de los filtros para que queden debajo del header sticky. */
-    #productFilters {
-        top: 80px; 
-    }
-    
-    .product-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-    .product-card { --card-padding: 12px; }
-    .product-image-container { height: 150px; }
-    .product-name { font-size: 0.85rem; }
-    .product-price { font-size: 1rem; }
-    .add-to-cart-btn { padding: 8px 10px; font-size: 0.8rem; }
-    .category-products-carousel .product-card { flex: 0 0 calc(50% - 0.5rem); }
-
-    .category-buttons-scroll { display: none; }
-    .category-buttons-grid { display: flex; flex-direction: column; gap: 0.75rem; }
-    .category-buttons-row {
+    /* Mostramos la barra de navegación inferior en móviles */
+    .bottom-nav { 
         display: flex;
-        overflow-x: auto;
-        gap: 0.75rem;
-        padding-bottom: 0.5rem;
-        -ms-overflow-style: none;
-        scrollbar-width: none;
     }
-    .category-buttons-row::-webkit-scrollbar { display: none; }
-    .category-btn { padding: 10px 20px; }
+    
+    /* Añadimos padding al final del main para que el último elemento no quede oculto por la barra */
+    main { 
+        padding-bottom: 80px;
+    }
 
-    .hero-swiper { height: 250px; }
-    .hero-slide-content h2 { font-size: 1.8rem; }
-    .hero-slide-content p { font-size: 1rem; }
-    .bottom-nav { display: flex; }
-    main { padding-bottom: 100px; }
+    /* Ocultamos el botón de búsqueda del header en móviles, ya que está en la barra inferior */
+    .main-header #openSearchBtn {
+        display: none;
+    }
+
+    /* Hacemos los títulos un poco más pequeños en móvil */
+    h2, .hero-slide-content h2 {
+        font-size: 1.8rem;
+    }
+    h3 {
+        font-size: 1.2rem;
+    }
+
+    /* Ajustamos el layout del product-grid */
+    .product-grid { 
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem; 
+    }
+    
+    .product-card {
+        border-radius: 12px;
+    }
+
+    .standard-card .product-details {
+        padding: 0.75rem;
+    }
+    .standard-card .product-name {
+        font-size: 0.9rem;
+        min-height: 2.5rem; /* Ajustar altura para el nuevo tamaño de fuente */
+    }
+    .standard-card .product-price {
+        font-size: 1.2rem;
+    }
+    .standard-card .add-to-cart-btn {
+        width: 40px;
+        height: 40px;
+    }
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
-    .product-grid { grid-template-columns: repeat(4, 1fr); }
-    .category-products-carousel .product-card { flex: 0 0 calc(25% - 1rem); }
-}
+@media (max-width: 480px) {
+    .product-grid {
+        /* En pantallas muy pequeñas, podemos forzar 2 columnas */
+        grid-template-columns: repeat(2, 1fr);
+    }
 
-@media (min-width: 1025px) {
-    .product-grid { grid-template-columns: repeat(5, 1fr); }
-    .category-products-carousel .product-card { flex: 0 0 calc(20% - 1rem); }
+    .category-btn {
+        padding: 6px 16px;
+        font-size: 0.85rem;
+    }
 }

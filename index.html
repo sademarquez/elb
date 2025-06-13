@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EL BORRACHO - Licores a Domicilio</title>
     
-    <!-- Scripts y Estilos -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <link rel="stylesheet" href="/css/styles.css">
@@ -23,36 +22,28 @@
     </header>
 
     <main class="container mx-auto p-4">
-        <!-- SECCIÓN DE BANNERS (HERO) -->
         <section id="hero-section" class="mb-8">
             <div class="swiper hero-swiper">
-                <div class="swiper-wrapper" id="heroSwiperWrapper">
-                    <!-- Los banners se insertarán aquí por JS -->
-                </div>
+                <div class="swiper-wrapper" id="heroSwiperWrapper"></div>
                 <div class="swiper-button-next"></div>
                 <div class="swiper-button-prev"></div>
                 <div class="swiper-pagination"></div>
             </div>
         </section>
 
-        <!-- SECCIÓN DE MARCAS -->
         <section id="brands-section" class="my-12">
              <h2 class="text-2xl font-bold mb-4 text-center text-text-color-secondary">Nuestras Marcas</h2>
              <div class="swiper brands-swiper">
-                <div class="swiper-wrapper" id="brandsSwiperWrapper">
-                    <!-- Los logos se insertarán aquí por JS -->
-                </div>
+                <div class="swiper-wrapper" id="brandsSwiperWrapper"></div>
              </div>
         </section>
 
-        <!-- CATÁLOGO DE PRODUCTOS -->
         <section id="category-section">
             <h2 class="text-3xl font-bold mb-4">Catálogo</h2>
             <div id="category-filters" class="flex gap-4 overflow-x-auto pb-4 mb-4" style="scrollbar-width: none;"></div>
             <div id="category-carousels"></div>
         </section>
 
-        <!-- CONTACTO -->
         <section id="contact-section" class="p-8 mt-12" style="background-color: #1d1d1f; border-radius: 18px;">
             <h2 class="text-3xl font-bold text-center mb-6">¿Necesitas Ayuda o un Pedido Especial?</h2>
             <div class="flex justify-center">
@@ -61,7 +52,6 @@
         </section>
     </main>
 
-    <!-- Sidebar del Carrito -->
     <aside id="cartSidebar" class="cart-sidebar">
         <div class="cart-header"><h2>Tu Pedido</h2><button id="closeCartBtn">×</button></div>
         <div id="cartItems" class="cart-items"></div>

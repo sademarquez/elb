@@ -1,36 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+/* ... (Todo el CSS que ya tenías) ... */
 
-:root { /* ... Tus variables de color ... */ }
-body { /* ... Estilos base del body ... */ }
+:root {
+    /* ... (Variables de color sin cambios) ... */
+    
+    /* CAMBIO: Mayor transparencia para el efecto "Glass" */
+    --glass-bg: rgba(44, 44, 46, 0.45); 
+    --glass-border: rgba(99, 99, 102, 0.2); 
+}
+
+body {
+    /* El background del body ya no es necesario, lo manejará la animación */
+    background-color: #000; /* Un color sólido de fallback */
+}
+
+
+/* --- FONDO ANIMADO --- */
+#animated-bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1; /* CRUCIAL: Detrás de todo el contenido */
+}
+
 
 /* === HEADER FLOTANTE === */
-.main-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 1.5rem; transition: all 0.3s ease-in-out; }
-.main-header.scrolled { background-color: rgba(28, 28, 30, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding-top: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(99, 99, 102, 0.3); }
-#headerLogo { transition: height 0.3s ease-in-out; }
-#headerLogo.scrolled-logo { height: 32px; }
-
-/* === BANDA DE MARCAS ESTÁTICA === */
-#brands-band { pt-28 pb-4 bg-black/20 border-b border-gray-800; padding-top: 7rem; padding-bottom: 1rem; } /* pt-28 Tailwind equivale a 7rem aprox */
-#brands-container { display: flex; justify-content: center; align-items: center; gap: 2rem; }
-.brand-logo-static { height: 30px; opacity: 0.5; filter: brightness(0) invert(1); transition: opacity 0.3s; }
-.brand-logo-static:hover { opacity: 1; }
-
-/* === TARJETAS DE PRODUCTO (Ya las tienes, se mantienen) === */
-.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
-.product-card { /* ... */ }
-.standard-card, .service-card, .sell-card { /* ... */ }
-
-/* === NUEVA SECCIÓN DE SERVICIOS === */
-.services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2rem;
-    align-items: stretch; /* Asegura que los hijos ocupen todo el alto */
+.main-header { /* ... */ }
+.main-header.scrolled {
+    background-color: rgba(18, 18, 18, 0.7); /* Fondo del header más transparente */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    /* ... */
 }
-/* Forzar que las tarjetas de servicio y venta ocupen el alto completo de su celda en el grid */
-.service-card, .sell-card { height: 100%; }
-
-/* --- FILTROS DE PÍLDORA (Ya los tienes, se mantienen) --- */
-.category-btn { /* ... */ }
-
-/* ... (Estilos de Cart, Search, Nav no cambian) ... */
+/* ... (El resto de tu CSS validado permanece igual) ... */

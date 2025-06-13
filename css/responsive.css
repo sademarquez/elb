@@ -1,19 +1,14 @@
 @media (max-width: 768px) {
-    /* Mostramos la barra de navegación inferior en móviles */
-    .bottom-nav { 
-        display: flex;
-    }
-    
-    /* Añadimos padding al final del main para que el último elemento no quede oculto por la barra */
+    /* En móvil, añadimos padding inferior para que el contenido no quede oculto por la barra */
     main { 
-        padding-bottom: 80px;
+        padding-bottom: 80px; 
     }
 
-    /* Ocultamos el botón de búsqueda del header en móviles, ya que está en la barra inferior */
+    /* Ocultamos el botón de búsqueda del header, ya que está en la barra inferior */
     .main-header #openSearchBtn {
         display: none;
     }
-
+    
     /* Hacemos los títulos un poco más pequeños en móvil */
     h2, .hero-slide-content h2 {
         font-size: 1.8rem;
@@ -32,25 +27,34 @@
         border-radius: 12px;
     }
 
-    .standard-card .product-details {
-        padding: 0.75rem;
+    .standard-card .product-details { padding: 0.75rem; }
+    .standard-card .product-name { font-size: 0.9rem; min-height: 2.5rem; }
+    .standard-card .product-price { font-size: 1.2rem; }
+    .standard-card .add-to-cart-btn { width: 40px; height: 40px; }
+
+    .hero-swiper {
+        height: 250px;
     }
-    .standard-card .product-name {
-        font-size: 0.9rem;
-        min-height: 2.5rem; /* Ajustar altura para el nuevo tamaño de fuente */
+}
+
+/* NUEVA REGLA: Oculta la barra de navegación en tablets y escritorios */
+@media (min-width: 769px) {
+    .bottom-nav {
+        display: none;
     }
-    .standard-card .product-price {
-        font-size: 1.2rem;
-    }
-    .standard-card .add-to-cart-btn {
-        width: 40px;
-        height: 40px;
+}
+
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    /* Mantener 3-4 columnas en tablets */
+    .product-grid { 
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     }
 }
 
 @media (max-width: 480px) {
+    /* Forzar 2 columnas en pantallas muy pequeñas */
     .product-grid {
-        /* En pantallas muy pequeñas, podemos forzar 2 columnas */
         grid-template-columns: repeat(2, 1fr);
     }
 

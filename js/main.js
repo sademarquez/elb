@@ -36,16 +36,22 @@ function renderCategoryCarousels() {
 }
 
 async function init() {
+    const catalogContainer = document.getElementById('category-section');
     try {
+        catalogContainer.innerHTML = `<p class="text-center text-gray-400">Cargando catálogo, por favor espera...</p>`;
+        
+        // CORRECCIÓN: Usamos la nueva ruta /api/ para la función Netlify.
         const [configResponse, productsResponse] = await Promise.all([
             fetch('/config.json'),
-            fetch('/.netlify/functions/get-catalog')
+            fetch('/api/get-catalog') 
         ]);
-        if (!configResponse.ok) throw new Error('No se pudo cargar config.json');
+
+        if (!configResponse.ok) throw new Error(`No se pudo cargar config.json (status: ${configResponse.status})`);
         appState.config = await configResponse.json();
+
         if (!productsResponse.ok) {
-            const errorData = await productsResponse.json();
-            throw new Error(errorData.error || 'Respuesta de red no fue exitosa.');
+            const errorData = await productsResponse.json().catch(() => ({error: `El servidor respondió con un error ${productsResponse.status}`}));
+            throw new Error(errorData.error);
         }
         appState.products = await productsResponse.json();
 
@@ -56,7 +62,6 @@ async function init() {
         renderCategoryCarousels();
         initCart(appState.products, appState.config.contactPhone);
         
-        // ACTIVACIÓN FINAL
         initHeroCarousel(appState.config.banners); 
         initBrandsCarousel(appState.config.brands);
         
@@ -74,7 +79,7 @@ async function init() {
 
     } catch (error) {
         console.error('Error fatal en init():', error);
-        document.getElementById('category-section').innerHTML = `<div class="bg-red-900/50 border border-red-700 text-red-300 p-4 rounded-lg"><p>No se pudo mostrar el catálogo.</p><p class="text-sm mt-2"><strong>Detalle:</strong> ${error.message}</p></div>`;
+        catalogContainer.innerHTML = `<div class="bg-red-900/50 border border-red-700 text-red-300 p-4 rounded-lg"><p class="font-bold">No se pudo cargar el catálogo.</p><p class="text-sm mt-2"><strong>Detalle:</strong> ${error.message}</p></div>`;
     }
 }
 

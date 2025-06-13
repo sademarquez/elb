@@ -5,7 +5,6 @@ import { setupSearch, toggleSearchModal } from './search.js';
 import { appState } from './state.js';
 import { initAgeVerification } from './age-verification.js';
 
-// --- FUNCIONES AUXILIARES (DEFINICIÓN ÚNICA Y CORRECTA) ---
 function updateStaticUI() {
     const siteTitle = document.getElementById('siteTitle');
     const headerLogo = document.getElementById('headerLogo');
@@ -15,70 +14,69 @@ function updateStaticUI() {
     if (contactBtn) contactBtn.href = `https://wa.me/${appState.config.contactPhone}?text=¡Hola!`;
 }
 
+// --- VERSIÓN CORREGIDA DE LA FUNCIÓN DE RENDERIZADO ---
 function renderCategoryCarousels() {
-    const carouselsContainer = document.getElementById('category-carousels');
-    const filtersContainer = document.getElementById('category-filters');
     const catalogSection = document.getElementById('category-section');
+    if (!catalogSection) {
+        console.error("No se encontró #category-section.");
+        return;
+    }
 
-    if (!carouselsContainer || !filtersContainer || !catalogSection) return;
+    catalogSection.innerHTML = `
+        <h2 class="text-3xl font-bold mb-4">Catálogo</h2>
+        <div id="category-filters" class="flex gap-4 overflow-x-auto pb-4 mb-4"></div>
+        <div id="category-carousels"></div>
+    `;
 
-    // Limpia cualquier mensaje de "cargando..." del contenedor principal
-    const loadingMessage = catalogSection.querySelector('p');
-    if (loadingMessage) loadingMessage.remove();
+    const filtersContainer = document.getElementById('category-filters');
+    const carouselsContainer = document.getElementById('category-carousels');
 
     if (!appState.products || appState.products.length === 0) {
-        carouselsContainer.innerHTML = `<p class="text-center text-amber-400 p-4">No hay productos en el catálogo.</p>`;
+        carouselsContainer.innerHTML = `<p class="text-center text-amber-400 p-4">No se encontraron productos.</p>`;
         return;
     }
     
     const categories = [...new Set(appState.products.map(p => p.category))];
     
-    // Genera el HTML para los botones de filtro y lo inserta
     filtersContainer.innerHTML = `
         <button class="category-btn active" data-category="Todos">Todos</button>
         ${categories.map(cat => `<button class="category-btn" data-category="${cat}">${cat}</button>`).join('')}
     `;
     
-    // Genera el HTML para los carruseles de productos y lo inserta
-    carouselsContainer.innerHTML = categories.map(category => {
+    let allCarouselsHTML = '';
+    categories.forEach(category => {
         const productsInCategory = appState.products.filter(p => p.category === category);
         const productCardsHTML = productsInCategory.map(p => renderProductCard(p).outerHTML).join('');
         const categoryId = category.toLowerCase().replace(/[^a-z0-9]/g, '-');
         
-        return `
+        allCarouselsHTML += `
             <section id="category-${categoryId}" class="product-carousel-section mt-8">
                 <h3 class="text-2xl font-bold mb-4">${category}</h3>
                 <div class="category-products-carousel">${productCardsHTML}</div>
             </section>
         `;
-    }).join('');
+    });
+    carouselsContainer.innerHTML = allCarouselsHTML;
     
-    // Añade el listener para la funcionalidad de los filtros
     filtersContainer.addEventListener('click', (e) => {
         const button = e.target.closest('.category-btn');
         if (!button) return;
-
         document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
-
         const selectedCategory = button.dataset.category;
         document.querySelectorAll('.product-carousel-section').forEach(section => {
+            const categoryId = selectedCategory.toLowerCase().replace(/[^a-z0-9]/g, '-');
             if (selectedCategory === 'Todos') {
                 section.style.display = 'block';
             } else {
-                const categoryId = selectedCategory.toLowerCase().replace(/[^a-z0-9]/g, '-');
                 section.style.display = section.id === `category-${categoryId}` ? 'block' : 'none';
             }
         });
     });
 }
 
-// --- LÓGICA DE INICIALIZACIÓN ---
 async function loadApp() {
-    const catalogSection = document.getElementById('category-section');
     try {
-        if(catalogSection) catalogSection.innerHTML = `<p class="text-center p-8">Cargando catálogo...</p>`;
-
         const [configResponse, productsResponse] = await Promise.all([
             fetch('/config.json'), fetch('/api/get-catalog')
         ]);
@@ -91,14 +89,13 @@ async function loadApp() {
         appState.products = productsData;
         
         updateStaticUI();
-        renderCategoryCarousels(); // La función clave que ahora está corregida
+        renderCategoryCarousels();
         initCart(appState.products, appState.config.contactPhone);
         
         if (appState.config.banners) initHeroCarousel(appState.config.banners);
         if (appState.config.brands) initBrandsCarousel(appState.config.brands);
         setupSearch();
         
-        // Listeners
         document.getElementById('openSearchBtn')?.addEventListener('click', () => toggleSearchModal(true));
         document.getElementById('openSearchNavBtn')?.addEventListener('click', () => toggleSearchModal(true));
         document.getElementById('openCartNavBtn')?.addEventListener('click', () => toggleCartSidebar(true));
@@ -109,19 +106,15 @@ async function loadApp() {
                 if (productCard) addToCart(productCard.dataset.id);
             }
         });
-
     } catch (error) {
-        console.error('Error fatal en loadApp():', error);
-        if(catalogSection) catalogContainer.innerHTML = `<div class="bg-red-900/50 p-4"><p>${error.message}</p></div>`;
+        const catalogContainer = document.getElementById('category-section');
+        if(catalogContainer) catalogContainer.innerHTML = `<div class="bg-red-900/50 p-4"><p>${error.message}</p></div>`;
     }
 }
 
-function init() {
-    initAgeVerification(loadApp); 
-}
+function init() { initAgeVerification(loadApp); }
 document.addEventListener('DOMContentLoaded', init);
 
-// Restauramos el Service Worker
 if ('serviceWorker' in navigator) { 
     window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
 }

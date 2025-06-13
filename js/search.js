@@ -1,89 +1,76 @@
-// js/search.js
-
 import { appState } from './main.js';
-import { renderProductCard } from './products.js'; // Importar la función para renderizar una sola tarjeta
-import { showToastNotification } from './toast.js';
+import { renderProductCard } from './products.js';
 
-let searchModal;
-let searchInput;
-let searchButton;
-let searchResultsGrid;
-let closeSearchModalBtn; // Botón para cerrar el modal de búsqueda
+// No necesitamos exportar estas variables, son internas del módulo
+let searchModal, searchInput, searchResultsGrid, closeSearchModalBtn;
 
 export function setupSearch() {
     searchModal = document.getElementById('searchModal');
-    searchInput = document.getElementById('searchInput'); // Este es el input dentro del modal
-    searchButton = document.getElementById('searchButton'); // Este es el botón dentro del modal
-    searchResultsGrid = document.getElementById('searchResultsGrid'); // Contenedor para los resultados de búsqueda
-    closeSearchModalBtn = document.getElementById('closeSearchModalBtn'); // El botón de cerrar modal
+    searchInput = document.getElementById('searchInput');
+    searchResultsGrid = document.getElementById('searchResultsGrid');
+    closeSearchModalBtn = document.getElementById('closeSearchModalBtn');
 
-    if (!searchModal || !searchInput || !searchButton || !searchResultsGrid || !closeSearchModalBtn) {
-        console.warn('search.js: Algunos elementos del modal de búsqueda no se encontraron. La funcionalidad de búsqueda podría estar limitada.');
+    if (!searchModal || !searchInput || !searchResultsGrid || !closeSearchModalBtn) {
+        console.warn('Elementos del modal de búsqueda no encontrados. La funcionalidad estará deshabilitada.');
         return;
     }
 
     const performSearch = () => {
         const searchTerm = searchInput.value.toLowerCase().trim();
-        let filteredProducts = [];
-
-        if (searchTerm.length < 2) { // Requiere al menos 2 caracteres para buscar
-            searchResultsGrid.innerHTML = `<p class="no-results-message">Ingresa al menos 2 caracteres para buscar.</p>`;
+        
+        if (searchTerm.length < 3) {
+            searchResultsGrid.innerHTML = `<p class="text-gray-400 col-span-full text-center">Ingresa al menos 3 caracteres para buscar.</p>`;
             return;
         }
 
-        filteredProducts = appState.products.filter(product =>
+        const filteredProducts = appState.products.filter(product =>
             product.name.toLowerCase().includes(searchTerm) ||
             product.brand.toLowerCase().includes(searchTerm) ||
             product.category.toLowerCase().includes(searchTerm)
         );
 
-        searchResultsGrid.innerHTML = ''; // Limpiar resultados anteriores
-
-        if (filteredProducts.length === 0) {
-            searchResultsGrid.innerHTML = `<p class="no-results-message">No se encontraron resultados para "${searchTerm}".</p>`;
-        } else {
-            filteredProducts.forEach(product => {
-                const productCard = renderProductCard(product); // Reutiliza renderProductCard
-                searchResultsGrid.appendChild(productCard);
-            });
-        }
+        renderSearchResults(filteredProducts, searchTerm);
     };
-
-    // Event Listeners
-    searchButton.addEventListener('click', performSearch);
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            performSearch();
-        }
-    });
-
+    
+    // Usamos 'input' para buscar en tiempo real mientras se escribe
+    searchInput.addEventListener('input', performSearch);
     closeSearchModalBtn.addEventListener('click', () => toggleSearchModal(false));
 
-    // console.log('search.js: Módulo de búsqueda configurado.'); // ELIMINADO para producción
+    console.log('Módulo de búsqueda inicializado.');
 }
 
-/**
- * Alterna la visibilidad del modal de búsqueda.
- * @param {boolean} open - true para abrir, false para cerrar. Si se omite, alterna.
- */
-export function toggleSearchModal(open) {
-    if (searchModal) {
-        if (typeof open === 'boolean') {
-            searchModal.classList.toggle('open', open);
-            searchModal.style.display = open ? 'flex' : 'none'; // Controlar display con JS para asegurar el centering
-        } else {
-            searchModal.classList.toggle('open'); // Toggle si no se especifica 'open'
-            searchModal.style.display = searchModal.classList.contains('open') ? 'flex' : 'none';
-        }
+function renderSearchResults(products, searchTerm) {
+    searchResultsGrid.innerHTML = ''; 
 
-        if (searchModal.classList.contains('open')) {
-            searchInput.focus(); // Autofocus al abrir el modal
-            searchInput.value = ''; // Limpiar input al abrir
-            searchResultsGrid.innerHTML = `<p class="no-results-message">Ingresa un término para buscar productos.</p>`;
-        } else {
-            // Limpiar al cerrar, aunque ya lo hacemos al abrir para mayor consistencia
+    if (products.length === 0) {
+        searchResultsGrid.innerHTML = `<p class="text-gray-400 col-span-full text-center">No se encontraron resultados para "<strong>${searchTerm}</strong>".</p>`;
+    } else {
+        const fragment = document.createDocumentFragment();
+        products.forEach(product => {
+            const productCard = renderProductCard(product);
+            fragment.appendChild(productCard);
+        });
+        searchResultsGrid.appendChild(fragment);
+    }
+}
+
+export function toggleSearchModal(open) {
+    if (!searchModal) return;
+
+    if (open) {
+        searchModal.style.display = 'flex';
+        // Pequeño delay para la animación de opacidad
+        setTimeout(() => {
+            searchModal.classList.add('opacity-100');
+            searchInput.focus();
             searchInput.value = '';
-            searchResultsGrid.innerHTML = `<p class="no-results-message">Ingresa un término para buscar productos.</p>`;
-        }
+            searchResultsGrid.innerHTML = `<p class="text-gray-400 col-span-full text-center">Ingresa un término para buscar productos.</p>`;
+        }, 10);
+    } else {
+        searchModal.classList.remove('opacity-100');
+        // Esperar a que termine la transición para ocultarlo
+        setTimeout(() => {
+            searchModal.style.display = 'none';
+        }, 300); // La duración debe coincidir con la transición en CSS
     }
 }

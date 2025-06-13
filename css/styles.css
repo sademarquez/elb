@@ -19,30 +19,24 @@
     --card-bg-hover: rgba(55, 55, 57, 0.8);
 }
 
-body { font-family: var(--font-family); background: linear-gradient(135deg, var(--bg-color-start), var(--bg-color-end)); color: var(--text-color-primary); overflow-x: hidden; min-height: 100vh; }
+body { 
+    font-family: var(--font-family); 
+    background: linear-gradient(135deg, var(--bg-color-start), var(--bg-color-end)); 
+    color: var(--text-color-primary); 
+    overflow-x: hidden; 
+    min-height: 100vh; 
+}
+
 main > section { margin-top: 2rem; }
 main > section:first-child { margin-top: 0; }
 
 .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
 
+/* --- Estilos Comunes de Tarjeta --- */
+.product-card { background: var(--glass-bg); border-radius: var(--border-radius); border: 1px solid var(--glass-border); overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column; }
+.product-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 15px 35px rgba(0, 122, 255, 0.2); }
 
-/* --- ESTILOS COMUNES DE TARJETA --- */
-.product-card {
-    background: var(--glass-bg);
-    border-radius: var(--border-radius);
-    border: 1px solid var(--glass-border);
-    overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    display: flex;
-    flex-direction: column;
-}
-.product-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 15px 35px rgba(0, 122, 255, 0.2);
-}
-
-
-/* --- 1. TARJETA ESTÁNDAR (CELULARES, ACCESORIOS) --- */
+/* --- 1. Tarjeta Estándar --- */
 .standard-card .product-image-container { height: 220px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 70%); }
 .standard-card .product-image { width: 100%; height: 100%; object-fit: contain; padding: 1.5rem; transition: transform 0.4s ease; }
 .standard-card:hover .product-image { transform: scale(1.1); }
@@ -54,8 +48,7 @@ main > section:first-child { margin-top: 0; }
 .standard-card .add-to-cart-btn { background: var(--primary-color); color: white; border: 0; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.3s ease; }
 .standard-card .add-to-cart-btn:hover { background: var(--secondary-color); transform: scale(1.1); }
 
-
-/* --- 2. TARJETA DE SERVICIO TÉCNICO --- */
+/* --- 2. Tarjeta de Servicio Técnico --- */
 .service-card { background: linear-gradient(145deg, #2a2a2e, #1a1a1c); border: 1px solid var(--primary-color); text-align: center; padding: 2rem; justify-content: space-between; }
 .service-card .service-icon { margin-bottom: 1rem; }
 .service-card .service-image-icon { height: 60px; width: auto; margin: 0 auto; filter: invert(53%) sepia(99%) saturate(1637%) hue-rotate(185deg) brightness(101%) contrast(101%); }
@@ -65,8 +58,7 @@ main > section:first-child { margin-top: 0; }
 .service-card .service-action-btn { display: inline-block; width: 100%; background: none; border: 2px solid var(--primary-color); color: var(--primary-color); padding: 12px; border-radius: 12px; font-weight: 600; transition: all 0.3s ease; text-decoration: none; }
 .service-card .service-action-btn:hover { background: var(--primary-color); color: white; }
 
-
-/* --- 3. TARJETA PARA "VENDE TU CELULAR" --- */
+/* --- 3. Tarjeta "Vende tu Celular" --- */
 .sell-card { background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'), linear-gradient(to top, var(--primary-color) 0%, #3a8dff 100%); background-color: var(--primary-color); color: white; padding: 2rem; text-align: center; justify-content: center; }
 .sell-card .sell-icon { font-size: 3rem; margin-bottom: 1rem; }
 .sell-card .sell-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
@@ -74,21 +66,46 @@ main > section:first-child { margin-top: 0; }
 .sell-card .sell-action-btn { display: inline-block; width: 100%; background: white; color: var(--primary-color); padding: 14px; border-radius: 12px; font-weight: 700; text-transform: uppercase; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-decoration: none; }
 .sell-card .sell-action-btn:hover { background: var(--text-color-primary); transform: scale(1.03); }
 
-
-/* --- ESTILOS PARA FILTROS DE PÍLDORA (Mejorado) --- */
-.category-btn { flex-shrink: 0; padding: 10px 24px; border-radius: 50px; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color-secondary); font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; }
+/* --- Filtros de Píldora --- */
+.category-btn { flex-shrink: 0; padding: 8px 20px; border-radius: 50px; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color-secondary); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; }
 .category-btn:hover { transform: translateY(-2px); color: var(--text-color-primary); border-color: var(--primary-color); }
 .category-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); transform: translateY(0); box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3); }
 
-/* --- OTROS ESTILOS --- */
-.hero-swiper { width: 100%; height: 350px; border-radius: var(--border-radius); overflow: hidden; }
-.hero-slide { display: flex; align-items: center; justify-content: center; text-align: center; color: white; background-size: cover; background-position: center; }
-/* ... (todos los demás estilos no cruciales para esta tarea se mantienen como estaban) ... */
-.brands-swiper .swiper-slide { width: auto; }
-.brand-logo { display: flex; align-items: center; justify-content: center; height: 80px; padding: 0 20px; }
-.brand-logo img { max-height: 50px; width: auto; filter: grayscale(100%) brightness(5); transition: filter 0.4s ease; }
-.brand-logo:hover img { filter: grayscale(0%); }
+/* --- Navegación Inferior (Mobile First) --- */
+.bottom-nav {
+    display: flex; /* Visible por defecto en el enfoque Mobile First */
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: rgba(28, 28, 30, 0.75);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-top: 1px solid var(--glass-border);
+    z-index: 100;
+}
 
-.cart-sidebar { /*...*/ }
-.bottom-nav { /*...*/ }
-/*...etc*/
+.bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    color: var(--text-color-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.bottom-nav-item span {
+    font-size: 0.7rem;
+}
+
+.bottom-nav-item.active {
+    color: var(--primary-color);
+    transform: translateY(-3px);
+}

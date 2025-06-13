@@ -1,102 +1,82 @@
 const fetch = require('node-fetch');
-const fs = require('fs');
-const path = require('path');
 
-// --- Funciones de Transformación (sin cambios) ---
-function transformWhatsAppProduct(p) {
-    if (!p.product_items || p.product_items.length === 0) return null;
-    const item = p.product_items[0];
-    return {
-        id: p.id,
-        name: item.product_name || 'Nombre no disponible',
-        price: parseFloat(item.price) / 100 || 0,
-        imageUrl: (item.images && item.images[0]) ? item.images[0].url : 'images/placeholder.png',
-        category: 'Desde WhatsApp' // O se podría intentar inferir
-    };
-}
-
+// Función para transformar una fila del CSV de Google Sheets en un objeto de producto estándar
 function transformSheetProduct(row, headers) {
     const product = {};
-    headers.forEach((h, i) => product[h.toLowerCase()] = row[i] || '');
-    if (!product.id || !product.name) return null;
+    // Asigna cada valor de la fila a la propiedad correspondiente del header
+    headers.forEach((header, index) => {
+        // Normalizamos los nombres de los headers a minúsculas y sin espacios para usarlos como claves
+        const key = header.toLowerCase().trim().replace(/\s+/g, '');
+        product[key] = row[index] ? row[index].trim().replace(/^"|"$/g, '') : '';
+    });
+
+    // Validaciones y transformaciones de datos
+    if (!product.id || !product.name) {
+        return null; // Si no hay ID o nombre, el producto no es válido.
+    }
+
     product.price = parseFloat(product.price) || 0;
-    product.imageUrl = product.imageurl || 'images/placeholder.png';
+    // Aseguramos que imageUrl tenga un valor por defecto si está vacío
+    product.imageurl = product.imageurl || 'images/placeholder.png'; 
+    // Renombramos 'imageurl' a 'imageUrl' para ser consistentes con el frontend
+    product.imageUrl = product.imageurl; 
+    delete product.imageurl;
+
     return product;
 }
 
-// --- Handler Principal de Netlify ---
-exports.handler = async function(event, context) {
-    const { WHATSAPP_ACCESS_TOKEN, WHATSAPP_CATALOG_ID, GOOGLE_SHEET_ID } = process.env;
+// Handler principal de la función Netlify
+exports.handler = async function() {
+    // ID del Google Sheet público. Este es tu link original.
+    const GOOGLE_SHEET_ID = '1litLRjHF5aBah8xcK5MivcdqmlcPa5oPnNZvBEMP6NA';
+    const sheetName = 'Productos';
+    const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
 
-    // --- Intento 1: WhatsApp API ---
-    if (WHATSAPP_ACCESS_TOKEN && WHATSAPP_CATALOG_ID) {
-        try {
-            console.log('Intentando obtener catálogo de WhatsApp...');
-            const url = `https://graph.facebook.com/v19.0/${WHATSAPP_CATALOG_ID}/products?fields=product_items{product_name,price,images{url}}&limit=100&access_token=${WHATSAPP_ACCESS_TOKEN}`;
-            const response = await fetch(url);
-            if (response.ok) {
-                const data = await response.json();
-                if (data.data && data.data.length > 0) {
-                    const products = data.data.map(transformWhatsAppProduct).filter(Boolean);
-                    console.log(`Éxito: Se obtuvieron ${products.length} productos de WhatsApp.`);
-                    return { statusCode: 200, body: JSON.stringify(products) };
-                }
-            } else {
-                console.warn(`WhatsApp API respondió con status: ${response.status}`);
-            }
-        } catch (e) {
-            console.error("Fallo en la petición a WhatsApp API:", e.message);
-        }
-    }
-
-    // --- Intento 2: Google Sheets ---
-    if (GOOGLE_SHEET_ID) {
-        try {
-            console.log('Intentando obtener catálogo de Google Sheets...');
-            const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Productos`;
-            const response = await fetch(url);
-            if (response.ok) {
-                const csv = await response.text();
-                // Regex mejorado para manejar comas dentro de campos entre comillas
-                const rows = csv.trim().split('\n').map(r => r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(f => f.trim().replace(/^"|"$/g, '')));
-                if (rows.length > 1) {
-                    const headers = rows.shift();
-                    const products = rows.map(r => transformSheetProduct(r, headers)).filter(Boolean);
-                    console.log(`Éxito: Se obtuvieron ${products.length} productos de Google Sheets.`);
-                    return { statusCode: 200, body: JSON.stringify(products) };
-                }
-            } else {
-                 console.warn(`Google Sheets respondió con status: ${response.status}`);
-            }
-        } catch (e) {
-            console.error("Fallo en la petición a Google Sheets:", e.message);
-        }
-    }
-
-    // --- Intento 3: Fallback Estático (products.json) ---
     try {
-        console.log('Intentando obtener catálogo del archivo JSON de fallback...');
-        // Asume que products.json está en la raíz del proyecto.
-        // Netlify incluye los archivos de la raíz en el contexto de la función.
-        const filePath = path.resolve(__dirname, '../../products.json');
-        if (fs.existsSync(filePath)) {
-            const jsonData = fs.readFileSync(filePath, 'utf-8');
-            const products = JSON.parse(jsonData);
-            if (products && products.length > 0) {
-                console.log(`Éxito: Se obtuvieron ${products.length} productos del archivo JSON local.`);
-                return { statusCode: 200, body: JSON.stringify(products) };
-            }
-        } else {
-             console.warn(`El archivo de fallback no se encontró en: ${filePath}`);
+        console.log(`Intentando obtener catálogo de Google Sheets: ${GOOGLE_SHEET_ID}`);
+        
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            // Si la respuesta no es 2xx, lanzamos un error claro
+            throw new Error(`Google Sheets respondió con un error: ${response.status} ${response.statusText}`);
         }
-    } catch (e) {
-        console.error("Fallo al leer el archivo JSON de fallback:", e.message);
+
+        const csvText = await response.text();
+
+        if (!csvText || csvText.trim() === '') {
+            throw new Error('El archivo CSV de Google Sheets está vacío.');
+        }
+
+        // Regex para separar por comas, pero ignorar las comas dentro de comillas dobles
+        const rows = csvText.trim().split('\n').map(r => r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/));
+
+        if (rows.length < 2) {
+            throw new Error('El CSV no contiene datos suficientes (solo cabecera o está vacío).');
+        }
+
+        const headers = rows.shift().map(h => h.trim().replace(/^"|"$/g, '')); // Extrae y limpia los headers
+        const products = rows.map(r => transformSheetProduct(r, headers)).filter(Boolean); // Procesa cada fila y filtra nulos
+
+        if (products.length === 0) {
+            console.warn('El CSV fue procesado, pero no se encontraron productos válidos.');
+        } else {
+            console.log(`Éxito: Se obtuvieron y procesaron ${products.length} productos de Google Sheets.`);
+        }
+
+        // Devuelve los productos con un código de éxito
+        return {
+            statusCode: 200,
+            body: JSON.stringify(products),
+        };
+
+    } catch (error) {
+        console.error("Error fatal al obtener/procesar el catálogo de Google Sheets:", error.message);
+        
+        // Devuelve un error 500 con un mensaje claro
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: `No se pudo cargar el catálogo. Causa: ${error.message}` }),
+        };
     }
-    
-    // --- Fallo Total ---
-    console.error("Todas las fuentes de datos fallaron.");
-    return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "No se pudo cargar el catálogo de ninguna fuente disponible." })
-    };
 };

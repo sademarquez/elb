@@ -3,7 +3,7 @@ import { initHeroCarousel, initBrandsCarousel } from './carousels.js';
 import { renderProductCard } from './products.js';
 import { setupSearch, toggleSearchModal } from './search.js';
 import { appState } from './state.js';
-import { initAgeVerification } from './age-verification.js';
+import { initWelcomeModal } from './welcome-modal.js'; // CAMBIO: Nueva importación
 
 function updateStaticUI() {
     const siteTitle = document.getElementById('siteTitle');
@@ -16,7 +16,10 @@ function updateStaticUI() {
 
 function renderCategoryCarousels() {
     const catalogSection = document.getElementById('category-section');
-    if (!catalogSection) return;
+    if (!catalogSection) {
+        console.error("No se encontró #category-section.");
+        return;
+    }
 
     catalogSection.innerHTML = `
         <h2 class="text-3xl font-bold mb-4">Catálogo</h2>
@@ -35,7 +38,6 @@ function renderCategoryCarousels() {
     const categories = [...new Set(appState.products.map(p => p.category))];
     
     let filtersHTML = `<button class="category-btn active" data-category="Todos">Todos</button>`;
-    
     categories.forEach(cat => {
         const emoji = cat.split(' ')[0];
         filtersHTML += `<button class="category-btn" data-category="${cat}" title="${cat}">${emoji}</button>`;
@@ -111,8 +113,9 @@ async function loadApp() {
     }
 }
 
+// CAMBIO: La función init() ahora llama a initWelcomeModal.
 function init() {
-    initAgeVerification(loadApp);
+    initWelcomeModal(loadApp); 
 }
 document.addEventListener('DOMContentLoaded', init);
 

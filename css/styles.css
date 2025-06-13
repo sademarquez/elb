@@ -38,7 +38,57 @@ main > section:first-child { margin-top: 0; }
 .standard-card .product-price { color: var(--text-color-primary); font-size: 1.5rem; font-weight: 700; }
 .standard-card .add-to-cart-btn { background: var(--primary-color); color: white; border: 0; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.3s ease; }
 .standard-card .add-to-cart-btn:hover { background: var(--secondary-color); transform: scale(1.1); }
+/* ... (Todo el CSS anterior de :root, body, tarjetas, filtros se mantiene igual) ... */
 
+
+/* === HEADER FLOTANTE === */
+.main-header { position: fixed; /* ... */ }
+.main-header.scrolled { /* ... */ }
+#headerLogo.scrolled-logo { /* ... */ }
+
+
+/* --- BANDA DE MARCAS ESTÁTICA --- */
+#brands-band {
+    background: var(--bg-color-start); /* Fondo oscuro consistente */
+}
+.brand-logo-static {
+    height: 40px; /* Tamaño consistente y elegante */
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+    filter: brightness(0) invert(1); /* Fuerza a que los logos sean blancos */
+}
+.brand-logo-static:hover {
+    opacity: 1;
+}
+
+/* ELIMINAMOS EL CARRUSEL HERO POR COMPLETO */
+.hero-swiper {
+    display: none;
+}
+
+/* --- NUEVA SECCIÓN DE SERVICIOS Y OPORTUNIDADES --- */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+/* Forzamos que las tarjetas de servicio y venta ocupen todo el alto */
+.service-card, .sell-card {
+    height: 100%;
+}
+
+/* REFINAMIENTO TARJETA DE PRODUCTO V2 (LA NUEVA QUE YA TENÍAS) */
+.product-card.standard-card-v2 {
+    background: linear-gradient(180deg, rgba(44, 44, 46, 0.4) 0%, rgba(28, 28, 30, 0.4) 100%);
+    padding: 1.5rem;
+    align-items: center;
+    text-align: center;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
+}
+/* ... (resto de los estilos para .standard-card-v2 se mantienen) ... */
+
+/* ... (resto de .cart-sidebar, .bottom-nav, y responsive.css sin cambios) ... */
 .service-card { background: linear-gradient(145deg, #2a2a2e, #1a1a1c); border: 1px solid var(--primary-color); text-align: center; padding: 2rem; justify-content: space-between; }
 .service-card .service-image-icon { height: 60px; margin: 0 auto 1rem; filter: invert(53%) sepia(99%) saturate(1637%) hue-rotate(185deg) brightness(101%) contrast(101%); }
 .service-card .service-name { font-size: 1.3rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.75rem; }

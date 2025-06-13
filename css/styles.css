@@ -127,3 +127,34 @@ main > section:first-child { margin-top: 0; }
     .product-grid { grid-template-columns: repeat(2, 1fr); }
     .category-btn { padding: 6px 16px; font-size: 0.85rem; }
 }
+/* === AJUSTES DE ESTILO PARA INTERCAMBIO DE CARRUSELES === */
+
+/* Carrusel de Banners (Hero) - se hace más pequeño */
+.hero-swiper {
+    height: 250px;
+}
+.hero-slide-content h2 {
+    font-size: 2.2rem;
+}
+.hero-slide-content p {
+    font-size: 1rem;
+    margin: 0.5rem auto 1rem;
+}
+.hero-slide-content .btn {
+    padding: 10px 20px;
+}
+
+
+/* Carrusel de Marcas - se hace más espacioso y prominente */
+.brands-swiper {
+    height: 100px;
+}
+.brand-logo { 
+    height: 100%;
+    padding: 0 40px; 
+}
+.brand-logo img { 
+    max-height: 60px;
+}
+
+/* === FIN DE AJUSTES === */

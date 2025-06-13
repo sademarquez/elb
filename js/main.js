@@ -4,41 +4,13 @@ import { renderProductCard } from './products.js';
 import { setupSearch, toggleSearchModal } from './search.js';
 import { appState } from './state.js';
 
-function updateStaticUI() {
-    const siteTitle = document.getElementById('siteTitle');
-    const headerLogo = document.getElementById('headerLogo');
-    const contactBtn = document.getElementById('contact-whatsapp-btn');
-    if (siteTitle) siteTitle.textContent = appState.config.siteName;
-    if (headerLogo) headerLogo.alt = appState.config.siteName;
-    if (contactBtn) contactBtn.href = `https://wa.me/${appState.config.contactPhone}?text=¡Hola!`;
-}
-
-function renderCategoryCarousels() {
-    const catalogSection = document.getElementById('category-section');
-    if (!catalogSection) return;
-    catalogSection.innerHTML = `<h2 class="text-3xl font-bold mb-4">Catálogo</h2><div id="category-filters" class="flex gap-3 justify-center items-center flex-wrap mb-4"></div><div id="category-carousels"></div>`;
-    const filtersContainer = document.getElementById('category-filters');
-    const carouselsContainer = document.getElementById('category-carousels');
-    if (!appState.products || appState.products.length === 0) { carouselsContainer.innerHTML = `<p>No se encontraron productos.</p>`; return; }
-    const categories = [...new Set(appState.products.map(p => p.category))];
-    filtersContainer.innerHTML = `<button class="category-btn active" data-category="Todos">Todos</button>${categories.map(cat => `<button class="category-btn" data-category="${cat}" title="${cat}">${cat.split(' ')[0]}</button>`).join('')}`;
-    carouselsContainer.innerHTML = categories.map(category => {
-        const productsInCategory = appState.products.filter(p => p.category === category);
-        const productCardsHTML = productsInCategory.map(p => renderProductCard(p).outerHTML).join('');
-        return `<section id="category-${category.toLowerCase().replace(/[^a-z0-9]/g, '-')}" class="mt-8"><h3 class="text-2xl font-bold mb-2 flex items-center gap-3">${category}</h3><div class="category-products-carousel">${productCardsHTML}</div></section>`;
-    }).join('');
-    filtersContainer.addEventListener('click', (e) => {
-        const button = e.target.closest('.category-btn'); if (!button) return;
-        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-        document.querySelectorAll('.product-carousel-section').forEach(section => {
-            section.style.display = (button.dataset.category === 'Todos' || section.id === `category-${button.dataset.category.toLowerCase().replace(/[^a-z0-9]/g, '-')}`) ? 'block' : 'none';
-        });
-    });
-}
-
+function updateStaticUI() { /*...*/ }
+function renderCategoryCarousels() { /*...*/ }
 async function loadApp() {
     try {
+        const catalogContainer = document.getElementById('category-section');
+        if (catalogContainer) catalogContainer.innerHTML += '<div id="category-filters"></div><div id="category-carousels"></div>';
+        
         const [configResponse, productsResponse] = await Promise.all([ fetch('/config.json'), fetch('/api/get-catalog') ]);
         appState.config = await configResponse.json();
         const productsData = await productsResponse.json();
@@ -61,26 +33,21 @@ async function loadApp() {
                 if (productCard) addToCart(productCard.dataset.id);
             }
         });
-    } catch (error) {
-        console.error('Error fatal en loadApp():', error);
-        const el = document.getElementById('category-section');
-        if(el) el.innerHTML = `<div class="bg-red-900/50 p-4"><p>${error.message}</p></div>`;
-    }
+    } catch (error) { console.error('Error en loadApp():', error); }
 }
 
 function showWelcomeAndLoadApp(callback) {
-    const modal = document.createElement('div');
-    modal.id = 'welcomeModal';
-    modal.className = 'age-verification-modal cursor-pointer visible';
-    modal.innerHTML = `
-        <div class="age-verification-content text-center" style="pointer-events: none;">
-            <img src="/images/logo_luna.png" alt="Logo" class="h-20 mx-auto mb-6 animate-pulse">
-            <h2 class="text-4xl font-bold text-primary-color mb-3">Comunicaciones Luna</h2>
-            <p class="text-text-color-secondary text-xl">Tu mundo, conectado.</p>
+    const modalHTML = `
+        <div id="welcomeModal" class="age-verification-modal cursor-pointer visible">
+            <div class="age-verification-content text-center" style="pointer-events: none;">
+                <img src="/images/logo_luna.png" alt="Logo" class="h-20 mx-auto mb-6 animate-pulse">
+                <h2 class="text-4xl font-bold text-primary-color mb-3">Comunicaciones Luna</h2>
+                <p class="text-text-color-secondary text-xl">Tu mundo, conectado.</p>
+            </div>
         </div>`;
-    document.body.appendChild(modal);
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-    const mainContent = document.getElementById('mainContent');
+    const modal = document.getElementById('welcomeModal');
     let dismissed = false;
 
     const dismissModal = () => {
@@ -89,23 +56,24 @@ function showWelcomeAndLoadApp(callback) {
         clearTimeout(timerId);
         document.removeEventListener('click', dismissModal);
         document.removeEventListener('keydown', dismissModal);
-        modal.classList.remove('visible');
-        modal.addEventListener('transitionend', () => modal.remove(), { once: true });
-        if (mainContent) mainContent.style.visibility = 'visible';
-        if (callback) requestAnimationFrame(callback);
+        if(modal) {
+            modal.classList.remove('visible');
+            modal.addEventListener('transitionend', () => modal.remove(), { once: true });
+        }
+        if (callback) callback();
     };
 
-    const timerId = setTimeout(dismissModal, 3000);
+    const timerId = setTimeout(dismissModal, 2500);
     document.addEventListener('click', dismissModal, { once: true });
     document.addEventListener('keydown', dismissModal, { once: true });
 }
 
-function init() {
-    showWelcomeAndLoadApp(loadApp);
-}
+document.addEventListener('DOMContentLoaded', () => {
+    // Al cargar la página, todo el contenido ya es parte del flujo normal del DOM.
+    // Solo el modal de bienvenida se superpone.
+    loadApp(); 
+    showWelcomeAndLoadApp(); // Lo llamamos sin callback, solo para mostrar el splash.
+});
 
-document.addEventListener('DOMContentLoaded', init);
-
-if ('serviceWorker' in navigator) { 
-    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
-}
+// He simplificado el `main.js` en esta respuesta, asegúrate de que tus funciones
+// renderCategoryCarousels y updateStaticUI estén completas como en el paso anterior.

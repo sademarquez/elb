@@ -1,88 +1,105 @@
 import { initCart, addToCart, toggleCartSidebar } from './cart.js';
-// Ya no necesitamos los carruseles aquí, así que los quitamos para limpiar.
-// import { initBrandsCarousel } from './carousels.js'; 
 import { renderProductCard } from './products.js';
 import { setupSearch, toggleSearchModal } from './search.js';
 import { appState } from './state.js';
 
-function updateStaticUI() { /* ... sin cambios ... */ }
+function updateStaticUI() {
+    const siteTitle = document.getElementById('siteTitle');
+    const headerLogo = document.getElementById('headerLogo');
+    if (siteTitle) siteTitle.textContent = appState.config.siteName;
+    if (headerLogo) headerLogo.alt = appState.config.siteName;
+}
 
-// --- NUEVA LÓGICA DE RENDERIZADO SEPARADO ---
-function renderContent() {
-    const products = appState.products;
-
-    // 1. Renderizar la banda de marcas estática
+// Renderiza únicamente la banda estática de logos de marcas
+function renderBrands(brands) {
     const brandsContainer = document.getElementById('brands-container');
-    if (brandsContainer && appState.config.brands) {
-        brandsContainer.innerHTML = appState.config.brands.map(brand => `
+    if (brandsContainer && brands) {
+        brandsContainer.innerHTML = brands.map(brand => `
             <img src="${brand.logoUrl}" alt="${brand.name}" class="brand-logo-static">
         `).join('');
     }
-
-    // 2. Separar productos de servicios/oportunidades
-    const mainProducts = products.filter(p => p.category === '📱 Celulares' || p.category === '🎧 Accesorios');
-    const serviceItems = products.filter(p => p.category === '🛠️ Servicio Técnico');
-    const sellItems = products.filter(p => p.category === '💰 Vende tu Celular');
-
-    // 3. Renderizar el catálogo principal
-    renderProductCatalog(mainProducts);
-    
-    // 4. Renderizar la nueva sección de servicios
-    renderServices(serviceItems, sellItems);
 }
 
-function renderProductCatalog(productsToRender) {
-    const filtersContainer = document.getElementById('category-filters');
-    const gridContainer = document.getElementById('product-grid-container');
-
+// Renderiza la cuadrícula de productos y sus filtros
+function renderProductCatalog(products) {
+    const filtersContainer = document.getElementById('catalog-filters');
+    const gridContainer = document.getElementById('catalog-grid');
     if (!filtersContainer || !gridContainer) return;
 
-    if (!productsToRender || productsToRender.length === 0) {
+    if (!products || products.length === 0) {
         gridContainer.innerHTML = `<p class="text-center col-span-full">No hay productos disponibles.</p>`;
         return;
     }
     
-    const categories = [...new Set(productsToRender.map(p => p.category))];
+    const categories = [...new Set(products.map(p => p.category))];
     filtersContainer.innerHTML = `<button class="category-btn active" data-category="Todos">Todos</button>${categories.map(cat => `<button class="category-btn" data-category="${cat}">${cat}</button>`).join('')}`;
     
     const fragment = document.createDocumentFragment();
-    productsToRender.forEach(product => fragment.appendChild(renderProductCard(product)));
+    products.forEach(product => fragment.appendChild(renderProductCard(product)));
     gridContainer.appendChild(fragment);
 
-    // Lógica de filtros (sin cambios)
-    filtersContainer.addEventListener('click', (e) => { /* ... */ });
+    filtersContainer.addEventListener('click', (e) => {
+        const button = e.target.closest('.category-btn');
+        if (!button) return;
+        document.querySelectorAll('#catalog-filters .category-btn').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        const selectedCategory = button.dataset.category;
+        gridContainer.querySelectorAll('.product-card').forEach(card => {
+            const product = appState.products.find(p => p.id === card.dataset.id);
+            card.style.display = (selectedCategory === 'Todos' || product?.category === selectedCategory) ? 'flex' : 'none';
+        });
+    });
 }
 
-function renderServices(serviceItems, sellItems) {
-    const serviceContainer = document.getElementById('service-card-container');
-    const sellContainer = document.getElementById('sell-card-container');
-    
-    if (serviceContainer && serviceItems.length > 0) {
-        serviceContainer.innerHTML = serviceItems.map(item => renderProductCard(item).outerHTML).join('');
-    }
-    if (sellContainer && sellItems.length > 0) {
-        sellContainer.innerHTML = sellItems.map(item => renderProductCard(item).outerHTML).join('');
+// Renderiza la sección de servicios
+function renderServicesAndOpportunities(items) {
+    const servicesGrid = document.getElementById('services-grid');
+    if (servicesGrid && items.length > 0) {
+        servicesGrid.innerHTML = items.map(item => renderProductCard(item).outerHTML).join('');
     }
 }
 
-
+// Función principal de inicialización
 async function loadApp() {
     try {
-        setupFloatingHeader(); // Mantener el header flotante
+        setupFloatingHeader();
 
-        const [configResponse, productsResponse] = await Promise.all([ fetch('/config.json'), fetch('/api/get-catalog') ]);
+        const [configResponse, productsResponse] = await Promise.all([fetch('/config.json'), fetch('/api/get-catalog')]);
         appState.config = await configResponse.json();
         appState.products = await productsResponse.json();
         
+        // Separar los productos de los servicios/oportunidades
+        const mainProducts = appState.products.filter(p => p.category === '📱 Celulares' || p.category === '🎧 Accesorios');
+        const serviceItems = appState.products.filter(p => p.category === '🛠️ Servicio Técnico' || p.category === '💰 Vende tu Celular');
+
+        // Renderizar cada sección con su data correspondiente
         updateStaticUI();
-        renderContent(); // <-- ÚNICA LLAMADA DE RENDERIZADO
+        renderBrands(appState.config.brands);
+        renderProductCatalog(mainProducts);
+        renderServicesAndOpportunities(serviceItems);
+        
         initCart(appState.products, appState.config.contactPhone);
         setupSearch();
         
-        // ... listeners ...
-    } catch (error) { /* ... */ }
+        // Listeners
+        document.getElementById('openSearchBtn')?.addEventListener('click', () => toggleSearchModal(true));
+        // ... (resto de listeners sin cambios)
+    } catch (error) {
+        console.error('Error fatal en loadApp():', error);
+    }
 }
 
-function setupFloatingHeader() { /* ... sin cambios ... */ }
+function setupFloatingHeader() {
+    const header = document.getElementById('mainHeader');
+    if (!header) return;
+    window.addEventListener('scroll', () => {
+        header.classList.toggle('scrolled', window.scrollY > 50);
+        document.getElementById('headerLogo')?.classList.toggle('scrolled-logo', window.scrollY > 50);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', loadApp);
-if ('serviceWorker' in navigator) { /* ... */ }
+
+if ('serviceWorker' in navigator) { 
+    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+}

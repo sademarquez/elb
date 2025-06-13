@@ -4,18 +4,72 @@ import { renderProductCard } from './products.js';
 import { setupSearch, toggleSearchModal } from './search.js';
 import { appState } from './state.js';
 
-function updateStaticUI() { /*...*/ }
-function renderCategoryCarousels() { /*...*/ }
+function updateStaticUI() {
+    const siteTitle = document.getElementById('siteTitle');
+    const headerLogo = document.getElementById('headerLogo');
+    const contactBtn = document.getElementById('contact-whatsapp-btn');
+    if (siteTitle) siteTitle.textContent = appState.config.siteName;
+    if (headerLogo) headerLogo.alt = appState.config.siteName;
+    if (contactBtn) contactBtn.href = `https://wa.me/${appState.config.contactPhone}?text=¡Hola!`;
+}
+
+function renderCategoryCarousels() {
+    const catalogSection = document.getElementById('category-section');
+    if (!catalogSection) return;
+
+    catalogSection.innerHTML = `
+        <h2 class="text-3xl font-bold mb-4">Catálogo</h2>
+        <div id="category-filters" class="flex gap-3 justify-center items-center flex-wrap mb-4"></div>
+        <div id="category-carousels" class="product-grid"></div>
+    `;
+
+    const filtersContainer = document.getElementById('category-filters');
+    const carouselsContainer = document.getElementById('category-carousels');
+
+    if (!appState.products || appState.products.length === 0) {
+        carouselsContainer.innerHTML = `<p class="text-center text-amber-400 p-4 col-span-full">No se encontraron productos.</p>`;
+        return;
+    }
+    
+    const categories = [...new Set(appState.products.map(p => p.category))];
+    
+    filtersContainer.innerHTML = `<button class="category-btn active" data-category="Todos">Todos</button>${categories.map(cat => `<button class="category-btn" data-category="${cat}" title="${cat}">${cat.split(' ')[0]}</button>`).join('')}`;
+    
+    const fragment = document.createDocumentFragment();
+    appState.products.forEach(product => {
+        fragment.appendChild(renderProductCard(product));
+    });
+    carouselsContainer.appendChild(fragment);
+
+    filtersContainer.addEventListener('click', (e) => {
+        const button = e.target.closest('.category-btn');
+        if (!button) return;
+        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        
+        const selectedCategory = button.dataset.category;
+        
+        // La lógica del filtro ahora funciona con tarjetas individuales
+        const allCards = carouselsContainer.querySelectorAll('.product-card');
+        allCards.forEach(card => {
+            const product = appState.products.find(p => p.id === card.dataset.id);
+            if (selectedCategory === 'Todos' || (product && product.category === selectedCategory)) {
+                card.style.display = 'flex'; // Usamos 'flex' porque las tarjetas son flex-containers
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+}
+
+
 async function loadApp() {
     try {
-        const catalogContainer = document.getElementById('category-section');
-        if (catalogContainer) catalogContainer.innerHTML += '<div id="category-filters"></div><div id="category-carousels"></div>';
-        
-        const [configResponse, productsResponse] = await Promise.all([ fetch('/config.json'), fetch('/api/get-catalog') ]);
+        const [configResponse, productsResponse] = await Promise.all([
+            fetch('/config.json'), fetch('/api/get-catalog')
+        ]);
         appState.config = await configResponse.json();
-        const productsData = await productsResponse.json();
-        if(productsData.error) throw new Error(productsData.error);
-        appState.products = productsData;
+        appState.products = await productsResponse.json();
         
         updateStaticUI();
         renderCategoryCarousels();
@@ -33,47 +87,18 @@ async function loadApp() {
                 if (productCard) addToCart(productCard.dataset.id);
             }
         });
-    } catch (error) { console.error('Error en loadApp():', error); }
+
+    } catch (error) {
+        console.error('Error fatal en loadApp():', error);
+        const catalogContainer = document.getElementById('category-section');
+        if(catalogContainer) catalogContainer.innerHTML = `<div class="bg-red-900/50 p-4"><p>Error al cargar: ${error.message}</p></div>`;
+    }
 }
 
-function showWelcomeAndLoadApp(callback) {
-    const modalHTML = `
-        <div id="welcomeModal" class="age-verification-modal cursor-pointer visible">
-            <div class="age-verification-content text-center" style="pointer-events: none;">
-                <img src="/images/logo_luna.png" alt="Logo" class="h-20 mx-auto mb-6 animate-pulse">
-                <h2 class="text-4xl font-bold text-primary-color mb-3">Comunicaciones Luna</h2>
-                <p class="text-text-color-secondary text-xl">Tu mundo, conectado.</p>
-            </div>
-        </div>`;
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-    const modal = document.getElementById('welcomeModal');
-    let dismissed = false;
+// Punto de entrada simple y directo.
+document.addEventListener('DOMContentLoaded', loadApp);
 
-    const dismissModal = () => {
-        if (dismissed) return;
-        dismissed = true;
-        clearTimeout(timerId);
-        document.removeEventListener('click', dismissModal);
-        document.removeEventListener('keydown', dismissModal);
-        if(modal) {
-            modal.classList.remove('visible');
-            modal.addEventListener('transitionend', () => modal.remove(), { once: true });
-        }
-        if (callback) callback();
-    };
-
-    const timerId = setTimeout(dismissModal, 2500);
-    document.addEventListener('click', dismissModal, { once: true });
-    document.addEventListener('keydown', dismissModal, { once: true });
+if ('serviceWorker' in navigator) { 
+    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Al cargar la página, todo el contenido ya es parte del flujo normal del DOM.
-    // Solo el modal de bienvenida se superpone.
-    loadApp(); 
-    showWelcomeAndLoadApp(); // Lo llamamos sin callback, solo para mostrar el splash.
-});
-
-// He simplificado el `main.js` en esta respuesta, asegúrate de que tus funciones
-// renderCategoryCarousels y updateStaticUI estén completas como en el paso anterior.

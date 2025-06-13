@@ -1,85 +1,112 @@
 const fetch = require('node-fetch');
 
-// ... (transformWhatsAppProduct no cambia)
+// ... (transformWhatsAppProduct sin cambios) ...
 function transformWhatsAppProduct(p) { /* ... */ }
 
-// --- Función de Transformación para Google Sheets (FORTALECIDA) ---
+function normalizeHeader(header) {
+    if (!header) return '';
+    const h = header.toLowerCase().trim().replace(/\s+/g, ''); // a minúsculas, sin espacios
+    if (h.includes('id')) return 'id';
+    if (h.includes('name') || h.includes('nombre')) return 'name';
+    if (h.includes('brand') || h.includes('marca')) return 'brand';
+    if (h.includes('category') || h.includes('categoría')) return 'category';
+    if (h.includes('price') || h.includes('precio')) return 'price';
+    if (h.includes('image') || h.includes('imagen')) return 'imageUrl';
+    return h; // Devuelve la clave normalizada si no coincide con las principales
+}
+
+
 function transformSheetProduct(row, headers) {
     const product = {};
     headers.forEach((header, index) => {
-        if (!header) return;
-        const key = header.toLowerCase().trim().replace(/\s+/g, '');
-        if (!key) return;
-        product[key] = row[index] ? row[index].trim().replace(/^"|"$/g, '') : '';
+        const key = normalizeHeader(header); // <-- USA LA NUEVA FUNCIÓN DE NORMALIZACIÓN
+        if (key) {
+            product[key] = row[index] ? row[index].trim().replace(/^"|"$/g, '') : '';
+        }
     });
 
-    // --- VERIFICACIÓN Y LOGGING ---
-    // Si no tiene un ID o un nombre, lo consideramos inválido y lo reportamos.
     if (!product.id || !product.name) {
-        console.warn('Fila descartada por falta de id o nombre:', JSON.stringify(product));
-        return null; 
+        // No logueamos aquí para no llenar los logs, el control se hará después
+        return null;
     }
-
     product.price = parseFloat(product.price) || 0;
-    
-    // Si la URL de la imagen no existe en la hoja, usa el campo 'imageurl' o un placeholder.
-    product.imageUrl = product.imageurl || product.imageurl || 'images/placeholder.png'; 
-    if(product.imageurl) delete product.imageurl; 
-
     return product;
 }
 
-// --- Handler Principal de Netlify (CON LOGS MEJORADOS) ---
 exports.handler = async function() {
-    // ... (Lógica de WhatsApp no cambia)
-    const { WHATSAPP_ACCESS_TOKEN, WHATSAPP_CATALOG_ID } = process.env;
-    if (WHATSAPP_ACCESS_TOKEN && WHATSAPP_CATALOG_ID) { /* ... */ }
+    // ... (lógica de WhatsApp sin cambios) ...
 
-    // --- Lógica de Google Sheets (FORTALECIDA) ---
+    // --- Lógica de Google Sheets con reporte de error mejorado ---
     const GOOGLE_SHEET_ID = '1Auh_WoDe3N7Q44JFv57waxOkmyi6ORFXjKzLTMUXhsA';
     const sheetName = 'Productos';
     const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
 
     try {
-        console.log(`Intentando obtener catálogo de Google Sheets (ID: ${GOOGLE_SHEET_ID})...`);
         const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`Google Sheets respondió con error: ${response.status} ${response.statusText}`);
-        }
-
+        if (!response.ok) throw new Error(`Google Sheets respondió con error: ${response.status}`);
         const csvText = await response.text();
-        if (!csvText || csvText.trim() === '') {
-            throw new Error('El archivo CSV de Google Sheets está vacío.');
-        }
+        if (!csvText || csvText.trim() === '') throw new Error('CSV vacío.');
 
         const rows = csvText.trim().split('\n').map(r => r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/));
-        if (rows.length < 2) {
-            throw new Error('El CSV no contiene filas de datos.');
-        }
+        if (rows.length < 2) throw new Error('CSV no contiene datos.');
 
-        const headers = rows.shift().map(h => h.trim().replace(/^"|"$/g, ''));
-        console.log('Cabeceras encontradas en el Sheet:', headers); // Log para ver las cabeceras
-
-        const products = rows.map(r => transformSheetProduct(r, headers)).filter(Boolean);
+        const originalHeaders = rows.shift().map(h => h.trim().replace(/^"|"$/g, ''));
+        const products = rows.map(r => transformSheetProduct(r, originalHeaders)).filter(Boolean);
         
+        // --- VERIFICACIÓN Y REPORTE CRUCIAL ---
         if (products.length === 0) {
-             // Este log es crucial si el array de productos está vacío.
-            console.warn('Se procesaron las filas, pero ningún producto fue validado. Revisa los logs de "Fila descartada".');
-        } else {
-            console.log(`Éxito: Se validaron ${products.length} productos de Google Sheets.`);
+            // Si después de todo, no hay productos, lanzamos un error informativo.
+            throw new Error(`Se leyeron ${rows.length} filas pero ninguna pudo ser validada como producto. Verifique las cabeceras. Cabeceras encontradas: [${originalHeaders.join(', ')}]`);
         }
         
-        return {
-            statusCode: 200,
-            body: JSON.stringify(products),
-        };
+        console.log(`Éxito: Se validaron ${products.length} productos de Google Sheets.`);
+        return { statusCode: 200, body: JSON.stringify(products) };
 
     } catch (error) {
-        console.error("Error fatal al procesar Google Sheets:", error.message);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: `Fallo en Google Sheets: ${error.message}` }),
-        };
+        console.error("Error en el handler de Google Sheets:", error.message);
+        return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+    }
+};
+
+// ... Para completitud, incluyo aquí la función de WhatsApp y la estructura completa del handler
+exports.handler = async function() {
+    const { WHATSAPP_ACCESS_TOKEN, WHATSAPP_CATALOG_ID } = process.env;
+    if (WHATSAPP_ACCESS_TOKEN && WHATSAPP_CATALOG_ID) { /* ... */ }
+
+    // El resto es idéntico a lo que pegué arriba
+    const GOOGLE_SHEET_ID = '1Auh_WoDe3N7Q44JFv57waxOkmyi6ORFXjKzLTMUXhsA';
+    // ... resto del try/catch de Google Sheets ...
+};
+
+// Copiando la estructura final y correcta del handler completo.
+exports.handler = async function() {
+    const { WHATSAPP_ACCESS_TOKEN, WHATSAPP_CATALOG_ID } = process.env;
+    if (WHATSAPP_ACCESS_TOKEN && WHATSAPP_CATALOG_ID) { /* lógica de WhatsApp */ }
+
+    const GOOGLE_SHEET_ID = '1Auh_WoDe3N7Q44JFv57waxOkmyi6ORFXjKzLTMUXhsA';
+    const sheetName = 'Productos';
+    const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Google Sheets respondió con error: ${response.status}`);
+        const csvText = await response.text();
+        if (!csvText || csvText.trim() === '') throw new Error('CSV vacío.');
+
+        const rows = csvText.trim().split('\n').map(r => r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/));
+        if (rows.length < 2) throw new Error('CSV no contiene datos.');
+
+        const originalHeaders = rows.shift().map(h => h.trim().replace(/^"|"$/g, ''));
+        const products = rows.map(r => transformSheetProduct(r, originalHeaders)).filter(Boolean);
+        
+        if (products.length === 0) {
+            throw new Error(`Se leyeron ${rows.length} filas pero ninguna pudo ser validada como producto. Verifique las cabeceras. Cabeceras encontradas: [${originalHeaders.join(', ')}]`);
+        }
+        
+        console.log(`Éxito: Se validaron ${products.length} productos de Google Sheets.`);
+        return { statusCode: 200, body: JSON.stringify(products) };
+    } catch (error) {
+        console.error("Error en el handler de Google Sheets:", error.message);
+        return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
     }
 };

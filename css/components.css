@@ -525,3 +525,8 @@
 .promotion-highlight h3 {
     color: var(--accent-color);
 }
+/* Añadir al final de components.css */
+.whatsapp-btn { background-color: #25D366; color: white; /* ...etc */ }
+.product-carousel-section { margin-top: 2rem; }
+.product-carousel { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; }
+/* ...otros estilos para los carruseles... */

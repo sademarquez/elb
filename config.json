@@ -32,23 +32,27 @@
     "brands": [
         {
             "name": "Apple",
-            "logoUrl": "https://i.imgur.com/dJtVpSj.png"
+            "emoji": "🍏"
         },
         {
             "name": "Samsung",
-            "logoUrl": "https://i.imgur.com/4qK9eS7.png"
+            "emoji": "🌌" 
         },
         {
             "name": "Xiaomi",
-            "logoUrl": "https://i.imgur.com/5Vl9RzR.png"
+            "emoji": "✨"
         },
         {
             "name": "Motorola",
-            "logoUrl": "https://i.imgur.com/m5R3j2y.png"
+            "emoji": "🦇"
         },
         {
             "name": "Anker",
-            "logoUrl": "https://i.imgur.com/Qj4S3dD.png"
+            "emoji": "⚡"
+        },
+        {
+            "name": "JBL",
+            "emoji": "🎶"
         }
     ]
 }

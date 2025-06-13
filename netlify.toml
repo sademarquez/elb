@@ -1,13 +1,13 @@
-# Configuración principal del build
+# Configuración de Build para Netlify
 [build]
-  # Directorio que Netlify debe publicar.
-  # Si tu index.html está en la raíz, este es el directorio correcto.
-  publish = "/"
+  # Directorio a publicar. "." significa la raíz del repositorio.
+  publish = "."
   
-  # Directorio donde se encuentran tus funciones serverless.
+  # Directorio donde se encuentran las funciones serverless.
   functions = "netlify/functions/"
 
-# Redirecciones para que las llamadas a la API funcionen correctamente
+# Redirección para crear una ruta de API amigable.
+# Cualquier llamada a /api/lo-que-sea se redirigirá a la función correspondiente.
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"

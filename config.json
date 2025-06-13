@@ -1,12 +1,74 @@
 {
     "siteName": "EL BORRACHO",
-    "contactPhone": "57317...",
+    "contactEmail": "pedidos@elborracho.com",
+    "contactPhone": "573174144815",
+    "address": "Popayán, Cauca, Colombia",
     "banners": [
-        { "id": "banner1", "imageUrl": "...", ... },
-        { "id": "banner2", "imageUrl": "...", ... }
+        {
+            "id": "banner1",
+            "title": "¡Licores Premium a tu Puerta!",
+            "description": "Descubre nuestra selección exclusiva para cada ocasión especial.",
+            "imageUrl": "https://i.imgur.com/8x8jY9c.png",
+            "link": "#",
+            "buttonText": "Ver Licores"
+        },
+        {
+            "id": "banner2",
+            "title": "Ofertas Increíbles en Cervezas",
+            "description": "Las mejores marcas con descuentos que no querrás perderte.",
+            "imageUrl": "https://i.imgur.com/7vYf7iI.png",
+            "link": "#",
+            "buttonText": "Comprar Cervezas"
+        },
+        {
+            "id": "banner3",
+            "title": "Snacks y Acompañantes",
+            "description": "El complemento perfecto para tu bebida favorita.",
+            "imageUrl": "https://i.imgur.com/9t4j2k3.png",
+            "link": "#",
+            "buttonText": "Explorar Snacks"
+        }
     ],
     "brands": [
-        { "name": "Buchanan's", "logoUrl": "..." },
-        { "name": "Corona", "logoUrl": "..." }
+        {
+            "name": "Aguardiente Caucano",
+            "logoUrl": "images/icons/aguardientecaucano-logo.svg"
+        },
+        {
+            "name": "Ron Viejo de Caldas",
+            "logoUrl": "images/icons/ron-caldas-logo.svg"
+        },
+        {
+            "name": "Buchanan's",
+            "logoUrl": "images/icons/buchanans-logo.svg"
+        },
+        {
+            "name": "Club Colombia",
+            "logoUrl": "images/icons/club-colombia-logo.svg"
+        },
+        {
+            "name": "Corona",
+            "logoUrl": "images/icons/corona-logo.svg"
+        },
+        {
+            "name": "Poker",
+            "logoUrl": "images/icons/poker-logo.svg"
+        },
+        {
+            "name": "Don Julio",
+            "logoUrl": "images/icons/donjulio-logo.svg"
+        },
+        {
+            "name": "Smirnoff",
+            "logoUrl": "images/icons/smirnoff-logo.svg"
+        },
+        {
+            "name": "Coca-Cola",
+            "logoUrl": "images/icons/cocacola-logo.svg"
+        },
+        {
+            "name": "Papas Margarita",
+            "logoUrl": "images/icons/margarita-logo.svg"
+        }
     ]
 }

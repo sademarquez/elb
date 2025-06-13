@@ -14,17 +14,13 @@ function updateStaticUI() {
     if (contactBtn) contactBtn.href = `https://wa.me/${appState.config.contactPhone}?text=¡Hola!`;
 }
 
-// --- VERSIÓN CORREGIDA DE LA FUNCIÓN DE RENDERIZADO ---
 function renderCategoryCarousels() {
     const catalogSection = document.getElementById('category-section');
-    if (!catalogSection) {
-        console.error("No se encontró #category-section.");
-        return;
-    }
+    if (!catalogSection) return;
 
     catalogSection.innerHTML = `
         <h2 class="text-3xl font-bold mb-4">Catálogo</h2>
-        <div id="category-filters" class="flex gap-4 overflow-x-auto pb-4 mb-4"></div>
+        <div id="category-filters" class="flex gap-3 justify-center items-center flex-wrap mb-4"></div>
         <div id="category-carousels"></div>
     `;
 
@@ -38,10 +34,13 @@ function renderCategoryCarousels() {
     
     const categories = [...new Set(appState.products.map(p => p.category))];
     
-    filtersContainer.innerHTML = `
-        <button class="category-btn active" data-category="Todos">Todos</button>
-        ${categories.map(cat => `<button class="category-btn" data-category="${cat}">${cat}</button>`).join('')}
-    `;
+    let filtersHTML = `<button class="category-btn active" data-category="Todos">Todos</button>`;
+    
+    categories.forEach(cat => {
+        const emoji = cat.split(' ')[0];
+        filtersHTML += `<button class="category-btn" data-category="${cat}" title="${cat}">${emoji}</button>`;
+    });
+    filtersContainer.innerHTML = filtersHTML;
     
     let allCarouselsHTML = '';
     categories.forEach(category => {
@@ -51,7 +50,7 @@ function renderCategoryCarousels() {
         
         allCarouselsHTML += `
             <section id="category-${categoryId}" class="product-carousel-section mt-8">
-                <h3 class="text-2xl font-bold mb-4">${category}</h3>
+                <h3 class="text-2xl font-bold mb-2 flex items-center gap-3">${category}</h3>
                 <div class="category-products-carousel">${productCardsHTML}</div>
             </section>
         `;
@@ -112,7 +111,9 @@ async function loadApp() {
     }
 }
 
-function init() { initAgeVerification(loadApp); }
+function init() {
+    initAgeVerification(loadApp);
+}
 document.addEventListener('DOMContentLoaded', init);
 
 if ('serviceWorker' in navigator) { 

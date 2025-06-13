@@ -67,14 +67,12 @@ function createStandardProductCard(product) {
 function createServiceCard(product) {
     const card = document.createElement('div');
     card.className = 'product-card service-card';
-    card.dataset.id = product.id; // Aunque no se añade al carrito, es bueno tener el ID
+    card.dataset.id = product.id;
 
-    // El precio para servicios se muestra como "Desde..."
-    const formattedPrice = `Desde ${product.price.toLocaleString('es-CO', {
-        style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0
-    })}`;
+    const formattedPrice = product.price > 0 
+        ? `Desde ${product.price.toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
+        : 'Sujeto a diagnóstico';
     
-    // Genera un mensaje de WhatsApp pre-llenado
     const whatsappMessage = encodeURIComponent(`Hola, quisiera más información sobre el servicio de "${product.name}".`);
     const whatsappLink = `https://wa.me/${appState.config.contactPhone}?text=${whatsappMessage}`;
 
@@ -84,7 +82,7 @@ function createServiceCard(product) {
         </div>
         <div class="service-details">
             <h3 class="service-name">${product.name}</h3>
-            <p class="service-description">Reparación profesional con repuestos de alta calidad y garantía.</p>
+            <p class="service-description">Diagnóstico y reparación profesional con repuestos de alta calidad y garantía.</p>
             <p class="service-price">${formattedPrice}</p>
             <a href="${whatsappLink}" target="_blank" rel="noopener noreferrer" class="service-action-btn">
                 Solicitar Servicio
@@ -104,7 +102,6 @@ function createSellCard(product) {
     card.className = 'product-card sell-card';
     card.dataset.id = product.id;
     
-    // Mensaje de WhatsApp pre-llenado para cotización
     const whatsappMessage = encodeURIComponent(`Hola, me interesa cotizar mi ${product.name} para la venta.`);
     const whatsappLink = `https://wa.me/${appState.config.contactPhone}?text=${whatsappMessage}`;
 

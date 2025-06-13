@@ -1,74 +1,54 @@
 {
-    "siteName": "EL BORRACHO",
-    "contactEmail": "pedidos@elborracho.com",
-    "contactPhone": "573174144815",
-    "address": "Popayán, Cauca, Colombia",
+    "siteName": "Comunicaciones Luna",
+    "contactEmail": "soporte@comunicacionesluna.com",
+    "contactPhone": "573001234567",
+    "address": "Santander de Quilichao, Cauca, Colombia",
     "banners": [
         {
             "id": "banner1",
-            "title": "¡Licores Premium a tu Puerta!",
-            "description": "Descubre nuestra selección exclusiva para cada ocasión especial.",
-            "imageUrl": "https://i.imgur.com/8x8jY9c.png",
-            "link": "#",
-            "buttonText": "Ver Licores"
+            "title": "¡Renueva tu Celular Hoy!",
+            "description": "Descubre las mejores ofertas en equipos Apple, Samsung y más.",
+            "imageUrl": "https://i.imgur.com/s1ZzG5O.jpg",
+            "link": "#category-%F0%9F%93%B1-celulares",
+            "buttonText": "Ver Celulares"
         },
         {
             "id": "banner2",
-            "title": "Ofertas Increíbles en Cervezas",
-            "description": "Las mejores marcas con descuentos que no querrás perderte.",
-            "imageUrl": "https://i.imgur.com/7vYf7iI.png",
-            "link": "#",
-            "buttonText": "Comprar Cervezas"
+            "title": "Servicio Técnico Profesional",
+            "description": "¿Pantalla rota? ¿Batería agotada? ¡Nosotros lo solucionamos!",
+            "imageUrl": "https://i.imgur.com/tHq4R7m.jpg",
+            "link": "#category-%F0%9F%9B%A0%EF%B8%8F-servicio-técnico",
+            "buttonText": "Reparar mi Celular"
         },
         {
             "id": "banner3",
-            "title": "Snacks y Acompañantes",
-            "description": "El complemento perfecto para tu bebida favorita.",
-            "imageUrl": "https://i.imgur.com/9t4j2k3.png",
-            "link": "#",
-            "buttonText": "Explorar Snacks"
+            "title": "¿Tu Celular Antiguo Vale Dinero?",
+            "description": "Tráenos tu equipo usado y te damos la mejor oferta. ¡No debe ser robado!",
+            "imageUrl": "https://i.imgur.com/R8g0w1x.jpg",
+            "link": "#category-%F0%9F%92%B0-vende-tu-celular",
+            "buttonText": "¡Quiero Vender!"
         }
     ],
     "brands": [
         {
-            "name": "Aguardiente Caucano",
-            "logoUrl": "images/icons/aguardientecaucano-logo.svg"
+            "name": "Apple",
+            "logoUrl": "https://i.imgur.com/dJtVpSj.png"
         },
         {
-            "name": "Ron Viejo de Caldas",
-            "logoUrl": "images/icons/ron-caldas-logo.svg"
+            "name": "Samsung",
+            "logoUrl": "https://i.imgur.com/4qK9eS7.png"
         },
         {
-            "name": "Buchanan's",
-            "logoUrl": "images/icons/buchanans-logo.svg"
+            "name": "Xiaomi",
+            "logoUrl": "https://i.imgur.com/5Vl9RzR.png"
         },
         {
-            "name": "Club Colombia",
-            "logoUrl": "images/icons/club-colombia-logo.svg"
+            "name": "Motorola",
+            "logoUrl": "https://i.imgur.com/m5R3j2y.png"
         },
         {
-            "name": "Corona",
-            "logoUrl": "images/icons/corona-logo.svg"
-        },
-        {
-            "name": "Poker",
-            "logoUrl": "images/icons/poker-logo.svg"
-        },
-        {
-            "name": "Don Julio",
-            "logoUrl": "images/icons/donjulio-logo.svg"
-        },
-        {
-            "name": "Smirnoff",
-            "logoUrl": "images/icons/smirnoff-logo.svg"
-        },
-        {
-            "name": "Coca-Cola",
-            "logoUrl": "images/icons/cocacola-logo.svg"
-        },
-        {
-            "name": "Papas Margarita",
-            "logoUrl": "images/icons/margarita-logo.svg"
+            "name": "Anker",
+            "logoUrl": "https://i.imgur.com/Qj4S3dD.png"
         }
     ]
 }

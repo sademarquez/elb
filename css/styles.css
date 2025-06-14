@@ -1,18 +1,31 @@
-/* ... (Todo el CSS que ya tenías) ... */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
 :root {
-    /* ... (Variables de color sin cambios) ... */
-    
-    /* CAMBIO: Mayor transparencia para el efecto "Glass" */
-    --glass-bg: rgba(44, 44, 46, 0.45); 
-    --glass-border: rgba(99, 99, 102, 0.2); 
+    --primary-color: #007AFF;
+    --secondary-color: #1E90FF;
+    --accent-color: #34C759;
+    --bg-color-start: #1C1C1E;
+    --bg-color-end: #000000;
+    --glass-bg: rgba(44, 44, 46, 0.45); /* Más transparente */
+    --glass-border: rgba(99, 99, 102, 0.25);
+    --text-color-primary: #F2F2F7;
+    --text-color-secondary: #8E8E93;
+    --border-radius: 18px;
+    --card-padding: 20px;
+    --shadow-light: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    --shadow-medium: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+    --transition-speed: 0.4s;
+    --font-family: 'Poppins', sans-serif;
+    --card-bg-hover: rgba(55, 55, 57, 0.7);
 }
 
-body {
-    /* El background del body ya no es necesario, lo manejará la animación */
-    background-color: #000; /* Un color sólido de fallback */
+body { 
+    font-family: var(--font-family); 
+    background-color: #000; /* Color sólido de fondo */
+    color: var(--text-color-primary); 
+    overflow-x: hidden; 
+    min-height: 100vh; 
 }
-
 
 /* --- FONDO ANIMADO --- */
 #animated-bg {
@@ -21,16 +34,134 @@ body {
     height: 100%;
     top: 0;
     left: 0;
-    z-index: -1; /* CRUCIAL: Detrás de todo el contenido */
+    z-index: -1;
+}
+
+/* Asegura que el contenido principal esté sobre el fondo */
+header, main, aside, nav, #searchModal {
+    position: relative;
+    z-index: 10;
+}
+header {
+    z-index: 50;
 }
 
 
-/* === HEADER FLOTANTE === */
-.main-header { /* ... */ }
+/* --- HEADER FLOTANTE --- */
+.main-header {
+    background-color: transparent;
+    transition: all 0.3s ease-in-out;
+}
 .main-header.scrolled {
-    background-color: rgba(18, 18, 18, 0.7); /* Fondo del header más transparente */
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    /* ... */
+    background-color: rgba(18, 18, 18, 0.75);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--glass-border);
 }
-/* ... (El resto de tu CSS validado permanece igual) ... */
+#headerLogo {
+    transition: height 0.3s ease-in-out;
+}
+#headerLogo.scrolled-logo {
+    height: 32px;
+}
+
+main > section { margin-top: 2rem; }
+main > section:first-child { margin-top: 0; }
+
+.product-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+    gap: 1.5rem; 
+}
+
+/* --- ESTILOS DE TARJETAS --- */
+.product-card { background: var(--glass-bg); border-radius: var(--border-radius); border: 1px solid var(--glass-border); overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column; }
+.product-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 15px 35px rgba(0, 122, 255, 0.2); }
+
+/* --- 1. Tarjeta Estándar --- */
+.standard-card .product-image-container { height: 220px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 70%); }
+.standard-card .product-image { width: 100%; height: 100%; object-fit: contain; padding: 1.5rem; transition: transform 0.4s ease; }
+.standard-card:hover .product-image { transform: scale(1.1); }
+.standard-card .product-details { padding: 1rem 1.5rem 1.5rem; flex-grow: 1; display: flex; flex-direction: column; text-align: left; }
+.standard-card .product-brand { color: var(--text-color-secondary); font-size: 0.8rem; font-weight: 500; }
+.standard-card .product-name { color: var(--text-color-primary); font-size: 1.1rem; font-weight: 600; line-height: 1.3; margin-top: 0.25rem; }
+.standard-card .price-action-wrapper { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
+.standard-card .product-price { color: var(--text-color-primary); font-size: 1.5rem; font-weight: 700; }
+.standard-card .add-to-cart-btn { background: var(--primary-color); color: white; border: 0; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.3s ease; }
+.standard-card .add-to-cart-btn:hover { background: var(--secondary-color); transform: scale(1.1); }
+
+/* --- 2. Tarjeta de Servicio Técnico --- */
+.service-card { background: linear-gradient(145deg, #2a2a2e, #1a1a1c); border: 1px solid var(--primary-color); text-align: center; padding: 2rem; justify-content: space-between; }
+.service-card .service-icon { margin-bottom: 1rem; }
+.service-card .service-image-icon { height: 60px; width: auto; margin: 0 auto; filter: invert(53%) sepia(99%) saturate(1637%) hue-rotate(185deg) brightness(101%) contrast(101%); }
+.service-card .service-name { font-size: 1.3rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.75rem; }
+.service-card .service-description { font-size: 0.9rem; color: var(--text-color-secondary); line-height: 1.5; margin-bottom: 1.5rem; }
+.service-card .service-price { font-weight: 500; font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--text-color-primary); }
+.service-card .service-action-btn { display: inline-block; width: 100%; background: none; border: 2px solid var(--primary-color); color: var(--primary-color); padding: 12px; border-radius: 12px; font-weight: 600; transition: all 0.3s ease; text-decoration: none; }
+.service-card .service-action-btn:hover { background: var(--primary-color); color: white; }
+
+/* --- 3. Tarjeta "Vende tu Celular" --- */
+.sell-card { background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'), linear-gradient(to top, var(--primary-color) 0%, #3a8dff 100%); background-color: var(--primary-color); color: white; padding: 2rem; text-align: center; justify-content: center; }
+.sell-card .sell-icon { font-size: 3rem; margin-bottom: 1rem; }
+.sell-card .sell-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
+.sell-card .sell-description { font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; opacity: 0.9; }
+.sell-card .sell-action-btn { display: inline-block; width: 100%; background: white; color: var(--primary-color); padding: 14px; border-radius: 12px; font-weight: 700; text-transform: uppercase; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-decoration: none; }
+.sell-card .sell-action-btn:hover { background: var(--text-color-primary); transform: scale(1.03); }
+
+/* --- Filtros de Píldora --- */
+.category-btn { flex-shrink: 0; padding: 8px 20px; border-radius: 50px; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color-secondary); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; }
+.category-btn:hover { transform: translateY(-2px); color: var(--text-color-primary); border-color: var(--primary-color); }
+.category-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); transform: translateY(0); box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3); }
+
+/* --- Carruseles --- */
+.hero-swiper { width: 100%; height: 280px; border-radius: var(--border-radius); overflow: hidden; }
+.hero-slide { display: flex; align-items: center; justify-content: center; text-align: center; color: white; background-size: cover; background-position: center; position: relative; }
+.hero-slide::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent 70%); }
+.hero-slide-content { position: relative; z-index: 2; padding: 1rem; }
+.hero-slide-content h2 { font-size: 2.2rem; font-weight: 700; }
+.hero-slide-content p { font-size: 1rem; margin: 0.5rem auto 1.5rem; }
+.hero-slide-content .btn { background: var(--primary-color); color: white; padding: 12px 24px; border-radius: 50px; font-weight: bold; text-decoration: none; transition: all 0.3s ease; }
+.hero-slide-content .btn:hover { background: var(--secondary-color); }
+.swiper-button-next, .swiper-button-prev { color: white !important; --swiper-navigation-size: 30px; }
+.swiper-pagination-bullet-active { background: var(--primary-color) !important; }
+
+.brands-swiper { height: 80px; }
+.brands-swiper .swiper-slide { width: auto; }
+.brand-emoji-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 0 20px; height: 100%; opacity: 0.6; transition: opacity 0.3s ease, transform 0.3s ease; }
+.brand-emoji-item:hover { opacity: 1; transform: scale(1.1); }
+.brand-emoji { font-size: 2.5rem; }
+.brand-name-text { font-size: 0.8rem; font-weight: 500; color: var(--text-color-secondary); }
+
+/* --- Componentes UI (Carrito, Nav, etc.) --- */
+/* (Aquí irían los estilos que tienes en components.css si decides consolidar) */
+
+
+/* --- Reglas de Responsividad (Importado de responsive.css) --- */
+@media (max-width: 768px) {
+    main { padding-bottom: 80px; }
+    .main-header #openSearchBtn { display: none; }
+    h2, .hero-slide-content h2 { font-size: 1.8rem; }
+    h3 { font-size: 1.2rem; }
+    .product-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+    .product-card { border-radius: 12px; }
+    .standard-card .product-details { padding: 0.75rem; }
+    .standard-card .product-name { font-size: 0.9rem; min-height: 2.5rem; }
+    .standard-card .product-price { font-size: 1.2rem; }
+    .standard-card .add-to-cart-btn { width: 40px; height: 40px; }
+    .hero-swiper { height: 250px; }
+}
+
+@media (min-width: 769px) {
+    .bottom-nav { display: none; }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .product-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+}
+
+@media (max-width: 480px) {
+    .product-grid { grid-template-columns: repeat(2, 1fr); }
+    .category-btn { padding: 6px 16px; font-size: 0.85rem; }
+}

@@ -8,30 +8,29 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/responsive.css">
     
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="/images/icons/icon-192.png">
     <link rel="manifest" href="/manifest.json">
 </head>
 <body>
-    <header class="main-header">
-        <div class="main-container">
+    <header class="main-header sticky top-0 z-40 p-4">
+        <div class="container mx-auto flex justify-between items-center">
             <a href="/"><img id="headerLogo" src="/images/logo_luna.png" alt="Comunicaciones Luna" class="h-10"></a>
-            <button id="openSearchBtn" aria-label="Abrir búsqueda" class="header-icon-btn">
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-            </button>
+            <button id="openSearchBtn" aria-label="Abrir búsqueda" class="p-2"><svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></button>
         </div>
     </header>
 
-    <main class="main-container">
-        <section id="brands-section" class="section-container"><h2 class="section-title">Marcas que Manejamos</h2><div class="swiper brands-swiper"><div class="swiper-wrapper" id="brandsSwiperWrapper"></div></div></section>
-        <section id="hero-section" class="section-container"><div class="swiper hero-swiper"><div class="swiper-wrapper" id="heroSwiperWrapper"></div><div class="swiper-pagination"></div><div class="swiper-button-next"></div><div class="swiper-button-prev"></div></div></section>
-        <section id="category-section" class="section-container"><h2 class="section-title">Catálogo</h2><p class="loading-text">Cargando catálogo...</p></section>
-        <section id="contact-section" class="contact-card"><h2 class="section-title">¿Quieres vender o necesitas soporte?</h2><div class="flex justify-center"><a href="#" id="contact-whatsapp-btn" target="_blank" class="action-btn">Hablar con un Técnico</a></div><p class="contact-note">Se requiere factura o registro de IMEI para la compra de equipos usados.</p></section>
+    <main class="container mx-auto p-4">
+        <section id="brands-section" class="mb-8"><h2 class="text-2xl font-bold mb-6 text-center text-text-color-secondary">Marcas que Manejamos</h2><div class="swiper brands-swiper"><div class="swiper-wrapper" id="brandsSwiperWrapper"></div></div></section>
+        <section id="hero-section" class="my-12"><div class="swiper hero-swiper"><div class="swiper-wrapper" id="heroSwiperWrapper"></div><div class="swiper-pagination"></div><div class="swiper-button-next"></div><div class="swiper-button-prev"></div></div></section>
+        <section id="category-section"><h2 class="text-3xl font-bold mb-4">Catálogo</h2><p class="text-center p-8">Cargando catálogo...</p></section>
+        <section id="contact-section" class="p-8 mt-12" style="background-color: #1d1d1f; border-radius: 18px;"><h2 class="text-3xl font-bold text-center mb-6">¿Quieres vender o necesitas soporte?</h2><div class="flex justify-center"><a href="#" id="contact-whatsapp-btn" target="_blank" class="add-to-cart-btn">Hablar con un Técnico</a></div><p class="text-xs text-center text-gray-500 mt-4">Para la compra de equipos usados se solicita factura de compra o registro de IMEI.</p></section>
     </main>
 
     <aside id="cartSidebar" class="cart-sidebar"><!-- Contenido del Carrito --></aside>
-    <div id="searchModal" class="search-modal"><!-- Contenido del Modal de Búsqueda --></div>
+    <div id="searchModal" class="fixed inset-0 ..."><!-- Contenido del Modal de Búsqueda --></div>
     <nav class="bottom-nav"><!-- Contenido de la Navegación Inferior --></nav>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

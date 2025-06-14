@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="siteTitle">Cargando...</title>
+    <meta name="theme-color" content="#3B82F6">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <link rel="stylesheet" href="/css/styles.css">
@@ -11,22 +12,74 @@
     <link rel="apple-touch-icon" href="/images/icons/icon-192.png">
     <link rel="manifest" href="/manifest.json">
 </head>
-<body>
+<body class="bg-bg-color-end">
+    <!-- Header -->
     <header class="main-header">
         <div class="main-container header-container">
             <a href="/"><img id="headerLogo" src="/images/logo_luna.png" alt="Comunicaciones Luna" class="h-10"></a>
-            <button id="openSearchBtn" aria-label="Abrir búsqueda" class="header-icon-btn"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></button>
+            <div class="flex items-center gap-4">
+                <button id="openSearchBtn" aria-label="Abrir búsqueda" class="header-icon-btn"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></button>
+                <button id="openCartBtn" aria-label="Abrir carrito" class="header-icon-btn relative">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                    <span id="cartCount" class="cart-count-badge">0</span>
+                </button>
+            </div>
         </div>
     </header>
+
+    <!-- Main Content -->
     <main class="main-container">
-        <section id="hero-section" class="section-container"><div class="swiper hero-swiper"><div class="swiper-wrapper" id="heroSwiperWrapper"></div><div class="swiper-pagination"></div><div class="swiper-button-next"></div><div class="swiper-button-prev"></div></div></section>
+        <section id="hero-section" class="section-container -mt-4 md:mt-16"><div class="swiper hero-swiper"><div class="swiper-wrapper" id="heroSwiperWrapper"></div><div class="swiper-pagination"></div><div class="swiper-button-next"></div><div class="swiper-button-prev"></div></div></section>
         <section id="brands-section" class="section-container"><h2 class="section-title">Marcas de Confianza</h2><div class="swiper brands-swiper"><div class="swiper-wrapper" id="brandsSwiperWrapper"></div></div></section>
-        <section id="category-section" class="section-container"><h2 class="section-title">Nuestro Catálogo</h2></section>
+        <section id="category-section" class="section-container"></section>
         <section id="contact-section" class="contact-card"><h2 class="section-title">¿Dudas o Requieres Soporte?</h2><div class="flex justify-center"><a href="#" id="contact-whatsapp-btn" target="_blank" class="action-btn">Hablar con un Técnico</a></div><p class="contact-note">También compramos tu equipo usado. Se requiere factura o registro de IMEI.</p></section>
     </main>
-    <aside id="cartSidebar" class="cart-sidebar"><!-- Contenido del Carrito --></aside>
-    <div id="searchModal" class="search-modal"><!-- Contenido del Modal de Búsqueda --></div>
-    <nav class="bottom-nav"><!-- Contenido de la Navegación Inferior --></nav>
+
+    <!-- Cart Sidebar -->
+    <aside id="cartSidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3>Tu Carrito</h3>
+            <button id="closeCartBtn" aria-label="Cerrar carrito">×</button>
+        </div>
+        <div id="cartItems" class="cart-items-container"></div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotalPrice">$0</span>
+            </div>
+            <button id="checkoutWhatsappBtn" class="action-btn w-full">Finalizar Pedido por WhatsApp</button>
+        </div>
+    </aside>
+
+    <!-- Search Modal -->
+    <div id="searchModal" class="search-modal">
+        <div class="search-modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Buscar Productos</h2>
+                <button id="closeSearchModalBtn" class="text-3xl text-gray-400 hover:text-white">×</button>
+            </div>
+            <input type="text" id="searchInput" placeholder="Ej: iPhone 15, Cargador, Samsung..." class="search-input">
+            <div id="searchResultsGrid" class="product-grid mt-6"></div>
+        </div>
+    </div>
+    
+    <!-- Bottom Navigation (Mobile) -->
+    <nav class="bottom-nav">
+        <a href="/" class="bottom-nav-item active" aria-label="Inicio">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            <span>Inicio</span>
+        </a>
+        <button id="bottomNavSearchBtn" class="bottom-nav-item" aria-label="Buscar">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <span>Buscar</span>
+        </button>
+        <button id="bottomNavCartBtn" class="bottom-nav-item relative" aria-label="Carrito">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            <span id="bottomNavCartCount" class="cart-count-badge">0</span>
+            <span>Carrito</span>
+        </button>
+    </nav>
+
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script type="module" src="/js/main.js"></script>
 </body>

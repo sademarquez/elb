@@ -2,24 +2,31 @@ export function renderProductCard(product) {
     const card = document.createElement('div');
     card.className = 'product-card';
     card.dataset.id = product.id;
+    // ... (resto del código de la tarjeta no cambia)
 
-    const formattedPrice = product.price.toLocaleString('es-CO', {
-        style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0
-    });
-    const imageUrl = product.imageUrl || 'https://i.imgur.com/3Y1Z8g9.png';
+    // Listener para la micro-interacción
+    const addToCartBtn = card.querySelector('.add-to-cart-btn');
+    if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', (e) => {
+            // Previene que el evento de clic se propague a otros elementos
+            e.stopPropagation();
+            
+            // Añade una clase temporal para la animación
+            addToCartBtn.classList.add('adding-to-cart');
+            // Cambia el icono a un check
+            addToCartBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+            `;
+            
+            // Después de un tiempo, revierte el botón a su estado original
+            setTimeout(() => {
+                addToCartBtn.classList.remove('adding-to-cart');
+                addToCartBtn.innerHTML = `+`;
+            }, 1500);
+        });
+    }
 
-    card.innerHTML = `
-        <div class="card-image-wrapper">
-            <img src="${imageUrl}" alt="${product.name}" class="product-image">
-        </div>
-        <div class="card-content-wrapper">
-            <span class="product-brand">${product.brand}</span>
-            <h3 class="product-name">${product.name}</h3>
-            <div class="price-action-wrapper">
-                <p class="product-price">${formattedPrice}</p>
-                <button class="add-to-cart-btn" aria-label="Añadir al carrito">+</button>
-            </div>
-        </div>
-    `;
     return card;
 }

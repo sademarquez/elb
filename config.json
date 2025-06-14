@@ -9,7 +9,7 @@
             "title": "¡Renueva tu Celular Hoy!",
             "description": "Descubre las mejores ofertas en equipos Apple, Samsung y más.",
             "imageUrl": "https://i.imgur.com/s1ZzG5O.jpg",
-            "link": "#category-%F0%9F%93%B1-celulares",
+            "link": "#",
             "buttonText": "Ver Celulares"
         },
         {
@@ -17,42 +17,15 @@
             "title": "Servicio Técnico Profesional",
             "description": "¿Pantalla rota? ¿Batería agotada? ¡Nosotros lo solucionamos!",
             "imageUrl": "https://i.imgur.com/tHq4R7m.jpg",
-            "link": "#category-%F0%9F%9B%A0%EF%B8%8F-servicio-técnico",
+            "link": "#",
             "buttonText": "Reparar mi Celular"
-        },
-        {
-            "id": "banner3",
-            "title": "¿Tu Celular Antiguo Vale Dinero?",
-            "description": "Tráenos tu equipo usado y te damos la mejor oferta. ¡No debe ser robado!",
-            "imageUrl": "https://i.imgur.com/R8g0w1x.jpg",
-            "link": "#category-%F0%9F%92%B0-vende-tu-celular",
-            "buttonText": "¡Quiero Vender!"
         }
     ],
     "brands": [
-        {
-            "name": "Apple",
-            "emoji": "🍏"
-        },
-        {
-            "name": "Samsung",
-            "emoji": "🌌" 
-        },
-        {
-            "name": "Xiaomi",
-            "emoji": "✨"
-        },
-        {
-            "name": "Motorola",
-            "emoji": "🦇"
-        },
-        {
-            "name": "Anker",
-            "emoji": "⚡"
-        },
-        {
-            "name": "JBL",
-            "emoji": "🎶"
-        }
+        { "name": "Apple", "logoUrl": "https://i.imgur.com/dJtVpSj.png" },
+        { "name": "Samsung", "logoUrl": "https://i.imgur.com/4qK9eS7.png" },
+        { "name": "Xiaomi", "logoUrl": "https://i.imgur.com/5Vl9RzR.png" },
+        { "name": "Motorola", "logoUrl": "https://i.imgur.com/m5R3j2y.png" },
+        { "name": "Anker", "logoUrl": "https://i.imgur.com/Qj4S3dD.png" }
     ]
 }

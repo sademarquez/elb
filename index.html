@@ -1,19 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="siteTitle">Cargando...</title>
-    <meta name="theme-color" content="#3B82F6">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Cargando...</title>
+    <meta name="theme-color" content="#1A1A1A">
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/images/icons/icon-192.png">
     
-    <!-- ACTIVACIÓN CORRECTA DE ESTILOS -->
+    <!-- Estilos y Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script> <!-- Mantenemos esto para que Tailwind aplique sus clases de utilidad -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
-    <link rel="stylesheet" href="/css/styles.css"> <!-- Este es TU archivo, ahora corregido -->
-    
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="/images/icons/icon-192.png">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
+<body>
+
+    <!-- ==== LOADER INICIAL ==== -->
+    <div id="app-loader" class="loader-overlay is-active">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- ==== HEADER ==== -->
+    <header class="app-header">
+        <div class="header-content">
+            <img id="header-logo" src="/images/logo_luna.png" alt="Logo" class="logo">
+            <button class="icon-button" data-action="toggle-cart" aria-label="Ver carrito">
+                <svg viewBox="0 0 24 24"><path d="M17,18C15.89,18 15,18.89 15,20A2,2 0 0,0 17,22A2,2 0 0,0 19,20C19,18.89 18.1,18 17,18M1,2V4H3L6.6,11.59L5.24,14.04C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42A0.25,0.25 0 0,1 7.17,14.75L8.1,13H15.55C16.3,13 16.96,12.58 17.3,11.97L20.88,5.5C20.95,5.34 21,5.17 21,5A1,1 0 0,0 20,4H5.21L4.27,2H1Z" /></svg>
+                <span id="cart-counter-badge" class="cart-badge">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ==== CONTENIDO PRINCIPAL ==== -->
+    <main id="app-main">
+        <div class="section-container">
+            <h1 id="catalog-title" class="main-title">Nuestro Catálogo</h1>
+            <div id="product-grid" class="product-grid">
+                <!-- Los productos se insertarán aquí usando la plantilla -->
+            </div>
+        </div>
+    </main>
+
+    <!-- ==== PANEL DEL CARRITO (Oculto por defecto) ==== -->
+    <aside id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h2>Tu Pedido</h2>
+            <button class="icon-button" data-action="toggle-cart" aria-label="Cerrar carrito">×</button>
+        </div>
+        <div id="cart-items-container" class="cart-items-container">
+            <!-- Los items del carrito se insertarán aquí -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cart-total-price">$0</span>
+            </div>
+            <button id="whatsapp-checkout-btn" class="button-primary" data-action="checkout-whatsapp" disabled>
+                Pedir por WhatsApp
+            </button>
+        </div>
+    </aside>
+
+    <!-- ==== OVERLAY (Para el carrito) ==== -->
+    <div id="app-overlay" class="overlay"></div>
+
+
+    <!-- ======================================================= -->
+    <!-- ==== PLANTILLAS (El secreto de la flexibilidad) ==== -->
+    <!-- ======================================================= -->
+
+    <!-- Plantilla para una tarjeta de producto -->
+    <template id="product-card-template">
+        <div class="product-card">
+            <div class="card-image-container">
+                <img data-value="imageUrl" src="" alt="" class="product-image" loading="lazy">
+            </div>
+            <div class="card-content">
+                <h3 data-value="name" class="product-name"></h3>
+                <div class="product-price-container">
+                    <span data-value="price" class="product-price"></span>
+                </div>
+                <button class="button-primary add-to-cart-button" data-action="add-to-cart">
+                    Añadir
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <!-- Plantilla para un item en el carrito -->
+    <template id="cart-item-template">
+        <div class="cart-item">
+            <img data-value="imageUrl" src="" alt="" class="cart-item-image">
+            <div class="cart-item-details">
+                <span data-value="name" class="cart-item-name"></span>
+                <span data-value="price" class="cart-item-price"></span>
+            </div>
+            <div class="cart-item-quantity">
+                <button class="quantity-button" data-action="decrease-quantity">-</button>
+                <span data-value="quantity">1</span>
+                <button class="quantity-button" data-action="increase-quantity">+</button>
+            </div>
+        </div>
+    </template>
+    
+    <!-- Scripts -->
+    <script type="module" src="/js/main.js"></script>
+</body>
+</html>

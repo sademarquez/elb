@@ -46,13 +46,25 @@ function renderCatalog() {
     const fragment = document.createDocumentFragment();
     appState.products.forEach(product => fragment.appendChild(renderProductCard(product)));
     gridContainer.appendChild(fragment);
+    
+    // MEJORA: Mapa de iconos para las categorías
+    const categoryIcons = {
+        'Todos': '✨',
+        'Celulares': '📱',
+        'Accesorios': '🎧',
+        'Servicio Técnico': '🔧',
+        'Vende tu Celular': '💰'
+    };
 
     const categories = ['Todos', ...new Set(appState.products.map(p => p.category).filter(Boolean))];
-    filtersContainer.innerHTML = categories.map(cat => 
-        `<button class="category-btn ${cat === 'Todos' ? 'active' : ''}" data-category="${cat}">${cat}</button>`
-    ).join('');
+    filtersContainer.innerHTML = categories.map(cat => {
+        const icon = categoryIcons[cat] || '📦'; // Icono por defecto
+        return `<button class="category-btn ${cat === 'Todos' ? 'active' : ''}" data-category="${cat}">
+                    <span class="category-icon">${icon}</span>
+                    <span>${cat}</span>
+                </button>`;
+    }).join('');
 }
-
 function setupEventListeners() {
     // Carrito
     document.getElementById('openCartBtn')?.addEventListener('click', () => toggleCartSidebar(true));

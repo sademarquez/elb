@@ -1,52 +1,31 @@
-// REFACTORIZADO: Código simplificado y preparado para recibir configuración externa.
-
 let cart = [];
 let allProducts = [];
 let whatsappNumber = '';
 
 const cartSidebar = document.getElementById('cartSidebar');
 const cartItemsContainer = document.getElementById('cartItems');
-const cartCount = document.getElementById('cartCount'); // Para el header
-const bottomNavCartCount = document.getElementById('bottomNavCartCount'); // Para la nav inferior móvil
-const cartTotalPrice = document.getElementById('cartTotalPrice');
-const CART_STORAGE_KEY = 'el_borracho_cart';
+const cartCountHeader = document.getElementById('cartCount');
+const cartCountNav = document.getElementById('bottomNavCartCount');
+const cartTotalPriceEl = document.getElementById('cartTotalPrice');
+const CART_STORAGE_KEY = 'comunicaciones_luna_cart'; // Clave profesional
 
-/**
- * REFACTORIZADO: Ahora recibe los productos y el teléfono al inicializarse.
- * @param {Array} productsData - Array de todos los productos de la tienda.
- * @param {string} phone - Número de teléfono de contacto para WhatsApp.
- */
 export function initCart(productsData, phone) {
     allProducts = productsData;
     whatsappNumber = phone;
-    const storedCart = localStorage.getItem(CART_STORAGE_KEY);
-    if (storedCart) {
-        try {
-            cart = JSON.parse(storedCart);
-        } catch (e) {
-            console.error("Error al parsear el carrito desde localStorage", e);
-            cart = [];
-        }
+    
+    try {
+        const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+        cart = storedCart ? JSON.parse(storedCart) : [];
+    } catch (e) {
+        console.error("Error al parsear el carrito. Reseteando.", e);
+        cart = [];
+        localStorage.removeItem(CART_STORAGE_KEY);
     }
     
     document.getElementById('closeCartBtn')?.addEventListener('click', () => toggleCartSidebar(false));
     document.getElementById('checkoutWhatsappBtn')?.addEventListener('click', sendOrderToWhatsapp);
     
-    cartItemsContainer?.addEventListener('click', event => {
-        const button = event.target.closest('button');
-        if (!button) return;
-
-        const productId = button.closest('.cart-item')?.dataset.id;
-        if (!productId) return;
-
-        if (button.matches('.quantity-increase')) {
-            updateQuantity(productId, 1);
-        } else if (button.matches('.quantity-decrease')) {
-            updateQuantity(productId, -1);
-        } else if (button.matches('.remove-item-btn')) {
-            removeFromCart(productId);
-        }
-    });
+    cartItemsContainer?.addEventListener('click', handleCartAction);
 
     updateCartUI();
     console.log('Módulo de carrito inicializado.');
@@ -67,7 +46,30 @@ export function addToCart(productId) {
     }
     saveCart();
     updateCartUI();
-    toggleCartSidebar(true); // Abrir el carrito al añadir un producto
+    toggleCartSidebar(true);
+}
+
+function handleCartAction(event) {
+    const button = event.target.closest('button');
+    if (!button) return;
+
+    const cartItemElement = button.closest('.cart-item');
+    if (!cartItemElement) return;
+
+    const productId = cartItemElement.dataset.id;
+    const action = button.dataset.action;
+
+    switch (action) {
+        case 'increase':
+            updateQuantity(productId, 1);
+            break;
+        case 'decrease':
+            updateQuantity(productId, -1);
+            break;
+        case 'remove':
+            removeFromCart(productId);
+            break;
+    }
 }
 
 function updateQuantity(productId, change) {
@@ -102,9 +104,10 @@ function updateCartUI() {
         cartItemsContainer.innerHTML = cart.map(item => {
             const product = allProducts.find(p => p.id === item.id);
             if (!product) {
-                // Producto no encontrado, quizás fue eliminado del catálogo.
-                // Lo removemos del carrito para evitar errores.
-                removeFromCart(item.id);
+                // Producto no encontrado en el catálogo, podría haber sido eliminado.
+                // Es mejor informarlo que fallar silenciosamente.
+                console.warn(`Producto con ID ${item.id} no encontrado en el catálogo. Será eliminado del carrito.`);
+                removeFromCart(item.id); // Llama a una actualización recursiva, pero es seguro.
                 return '';
             };
             return `
@@ -112,14 +115,14 @@ function updateCartUI() {
                 <img src="${product.imageUrl}" alt="${product.name}" loading="lazy">
                 <div class="cart-item-details">
                     <h4>${product.name}</h4>
-                    <p class="price">$${product.price.toLocaleString('es-CO')}</p>
+                    <p class="price">${product.price.toLocaleString('es-CO', {style: 'currency', currency: 'COP', minimumFractionDigits: 0})}</p>
                 </div>
                 <div class="cart-item-controls">
-                    <button class="quantity-decrease">-</button>
+                    <button data-action="decrease">-</button>
                     <span class="px-2">${item.quantity}</span>
-                    <button class="quantity-increase">+</button>
+                    <button data-action="increase">+</button>
                 </div>
-                <button class="remove-item-btn text-2xl leading-none">×</button>
+                <button data-action="remove" class="remove-item-btn text-2xl leading-none">×</button>
             </div>`;
         }).join('');
     }
@@ -130,32 +133,35 @@ function updateCartUI() {
         return sum + (product ? (product.price * item.quantity) : 0);
     }, 0);
     
-    if (cartCount) cartCount.textContent = totalItems;
-    if (bottomNavCartCount) bottomNavCartCount.textContent = totalItems;
-    if (cartTotalPrice) cartTotalPrice.textContent = `$${totalPrice.toLocaleString('es-CO')}`;
+    if (cartCountHeader) cartCountHeader.textContent = totalItems;
+    if (cartCountNav) cartCountNav.textContent = totalItems;
+    if (cartTotalPriceEl) cartTotalPriceEl.textContent = totalPrice.toLocaleString('es-CO', {style: 'currency', currency: 'COP', minimumFractionDigits: 0});
+    
+    if (cartCountHeader) cartCountHeader.style.display = totalItems > 0 ? 'flex' : 'none';
+    if (cartCountNav) cartCountNav.style.display = totalItems > 0 ? 'flex' : 'none';
 }
 
 function sendOrderToWhatsapp() {
     if (cart.length === 0) {
-        alert("Tu carrito está vacío. Añade productos para hacer un pedido.");
+        alert("Tu carrito está vacío.");
         return;
     }
     if (!whatsappNumber) {
-        alert("Lo sentimos, hay un problema de configuración y no podemos procesar tu pedido. Contacta al soporte.");
+        alert("Error de configuración. No podemos procesar tu pedido en este momento.");
         return;
     }
 
-    let message = "¡Hola EL BORRACHO! Quisiera hacer el siguiente pedido:\n\n";
+    let message = `¡Hola *Comunicaciones Luna*! ✨\n\nQuisiera hacer el siguiente pedido:\n\n`;
     let total = 0;
     cart.forEach(item => {
         const product = allProducts.find(p => p.id === item.id);
         if(product) {
             const subtotal = product.price * item.quantity;
-            message += `${item.quantity}x ${product.name} - $${subtotal.toLocaleString('es-CO')}\n`;
+            message += `*${item.quantity}x* ${product.name} - ${subtotal.toLocaleString('es-CO', {style: 'currency', currency: 'COP', minimumFractionDigits: 0})}\n`;
             total += subtotal;
         }
     });
-    message += `\n*Total del Pedido: $${total.toLocaleString('es-CO')}*`;
+    message += `\n*Total del Pedido: ${total.toLocaleString('es-CO', {style: 'currency', currency: 'COP', minimumFractionDigits: 0})}*`;
     message += `\n\nQuedo a la espera de la confirmación. ¡Gracias!`;
 
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;

@@ -4,55 +4,66 @@ import { renderProductCard } from './products.js';
 import { setupSearch, toggleSearchModal } from './search.js';
 import { appState } from './state.js';
 
-function updateStaticUI() { /* ... sin cambios ... */ }
+function updateStaticUI() {
+    const config = appState.config;
+    document.title = config.siteName || 'Comunicaciones Luna';
+    document.getElementById('siteTitle').textContent = config.siteName;
+    
+    const whatsappBtn = document.getElementById('contact-whatsapp-btn');
+    if (whatsappBtn && config.contactPhone) {
+        const message = encodeURIComponent(`¡Hola ${config.siteName}! Quisiera más información.`);
+        whatsappBtn.href = `https://wa.me/${config.contactPhone}?text=${message}`;
+    }
+}
 
 function renderSkeletonCards(count = 8) {
     const gridContainer = document.getElementById('product-grid-container');
     if (!gridContainer) return;
-    let skeletonsHTML = '';
-    for (let i = 0; i < count; i++) {
-        skeletonsHTML += `
-            <div class="product-card skeleton-card">
-                <div class="card-image-wrapper skeleton"></div>
-                <div class="card-content-wrapper">
-                    <div class="skeleton skeleton-text" style="width: 80%;"></div>
-                    <div class="skeleton skeleton-text" style="width: 40%; margin-top: 1rem;"></div>
-                </div>
+    gridContainer.innerHTML = Array(count).fill('').map(() => `
+        <div class="product-card skeleton-card">
+            <div class="card-image-wrapper skeleton"></div>
+            <div class="card-content-wrapper">
+                <div class="skeleton skeleton-text" style="width: 80%;"></div>
+                <div class="skeleton skeleton-text" style="width: 40%; margin-top: 1rem;"></div>
             </div>
-        `;
-    }
-    gridContainer.innerHTML = skeletonsHTML;
+        </div>
+    `).join('');
 }
 
-function renderCategoryCarousels() {
+function renderCatalog() {
     const catalogSection = document.getElementById('category-section');
-    if (!catalogSection) return;
-
-    catalogSection.innerHTML = `
-        <h2 class="section-title">Catálogo</h2>
-        <div id="category-filters" class="category-filters"></div>
-        <div id="product-grid-container" class="product-grid"></div>
-    `;
-
-    renderSkeletonCards(); // Mostrar esqueletos mientras se cargan los datos
-
-    const filtersContainer = document.getElementById('category-filters');
     const gridContainer = document.getElementById('product-grid-container');
+    const filtersContainer = document.getElementById('category-filters');
+
+    if (!catalogSection || !gridContainer || !filtersContainer) return;
 
     if (!appState.products || appState.products.length === 0) {
-        gridContainer.innerHTML = `<p class="text-center p-4 col-span-full">No se encontraron productos.</p>`;
+        gridContainer.innerHTML = `<p class="text-center p-4 col-span-full">No hay productos disponibles en este momento.</p>`;
         return;
     }
 
-    gridContainer.innerHTML = ''; // Limpiar esqueletos
+    gridContainer.innerHTML = '';
     const fragment = document.createDocumentFragment();
     appState.products.forEach(product => fragment.appendChild(renderProductCard(product)));
     gridContainer.appendChild(fragment);
 
-    const categories = [...new Set(appState.products.map(p => p.category))];
-    filtersContainer.innerHTML = `<button class="category-btn active" data-category="Todos">Todos</button>${categories.map(cat => `<button class="category-btn" data-category="${cat}">${cat}</button>`).join('')}`;
+    const categories = ['Todos', ...new Set(appState.products.map(p => p.category).filter(Boolean))];
+    filtersContainer.innerHTML = categories.map(cat => 
+        `<button class="category-btn ${cat === 'Todos' ? 'active' : ''}" data-category="${cat}">${cat}</button>`
+    ).join('');
+}
 
-    filtersContainer.addEventListener('click', (e) => {
+function setupEventListeners() {
+    // Carrito
+    document.getElementById('openCartBtn')?.addEventListener('click', () => toggleCartSidebar(true));
+    document.getElementById('bottomNavCartBtn')?.addEventListener('click', () => toggleCartSidebar(true));
+    
+    // Búsqueda
+    document.getElementById('openSearchBtn')?.addEventListener('click', () => toggleSearchModal(true));
+    document.getElementById('bottomNavSearchBtn')?.addEventListener('click', () => toggleSearchModal(true));
+
+    // Filtrado de categorías
+    document.getElementById('category-filters')?.addEventListener('click', (e) => {
         const button = e.target.closest('.category-btn');
         if (!button) return;
         
@@ -60,25 +71,32 @@ function renderCategoryCarousels() {
         button.classList.add('active');
         
         const selectedCategory = button.dataset.category;
-        const allCards = gridContainer.querySelectorAll('.product-card');
+        const allCards = document.querySelectorAll('#product-grid-container .product-card');
 
         allCards.forEach(card => {
             const product = appState.products.find(p => p.id === card.dataset.id);
-            if (!product) return;
-            
-            // Lógica de animación para el filtrado
-            const matches = (selectedCategory === 'Todos' || product.category === selectedCategory);
-            card.classList.toggle('hidden-by-filter', !matches);
+            const matches = (selectedCategory === 'Todos' || product?.category === selectedCategory);
+            card.classList.toggle('hide', !matches);
         });
+    });
+
+    // Añadir al carrito (delegación de eventos en el contenedor de productos)
+    document.getElementById('product-grid-container')?.addEventListener('click', (e) => {
+        const button = e.target.closest('.add-to-cart-btn');
+        if (button) {
+            const card = button.closest('.product-card');
+            if (card && card.dataset.id) {
+                addToCart(card.dataset.id);
+            }
+        }
     });
 }
 
 async function loadApp() {
-    // Renderizar la estructura y los esqueletos inmediatamente
     const catalogSection = document.getElementById('category-section');
     if (catalogSection) {
         catalogSection.innerHTML = `
-            <h2 class="section-title">Catálogo</h2>
+            <h2 class="section-title">Nuestro Catálogo</h2>
             <div id="category-filters" class="category-filters"></div>
             <div id="product-grid-container" class="product-grid"></div>
         `;
@@ -87,25 +105,43 @@ async function loadApp() {
     
     try {
         const [configResponse, productsResponse] = await Promise.all([
-            fetch('/config.json'), fetch('/api/get-catalog')
+            fetch('/config.json'), 
+            fetch('/api/get-catalog') // Asumiendo que esta es la Netlify Function
         ]);
+        if (!configResponse.ok || !productsResponse.ok) {
+            throw new Error('No se pudo cargar la configuración o los productos.');
+        }
+
         appState.config = await configResponse.json();
-        appState.products = await productsResponse.json();
-        if(appState.products.error) throw new Error(appState.products.error);
+        const productData = await productsResponse.json();
+        if (productData.error) throw new Error(productData.error);
+        appState.products = productData;
         
         updateStaticUI();
-        renderCategoryCarousels(); // Ahora renderiza con los datos reales
+        renderCatalog();
         initCart(appState.products, appState.config.contactPhone);
-        if (appState.config.banners) initHeroCarousel(appState.config.banners);
-        if (appState.config.brands) initBrandsCarousel(appState.config.brands);
+        initHeroCarousel(appState.config.banners);
+        initBrandsCarousel(appState.config.brands);
         setupSearch();
+        setupEventListeners();
         
-        // ... (listeners sin cambios)
     } catch (error) {
         console.error('Error fatal en loadApp():', error);
-        if(catalogSection) catalogContainer.innerHTML = `<div class="error-card"><p>Error: ${error.message}</p></div>`;
+        if(catalogSection) {
+            document.getElementById('product-grid-container').innerHTML = `<div class="p-4 text-center col-span-full bg-red-900/50 rounded-lg">
+                <p class="font-bold text-lg">Oops, algo salió mal</p>
+                <p class="text-red-300">${error.message}</p>
+                <p class="mt-2 text-sm">Por favor, intenta recargar la página.</p>
+            </div>`;
+        }
     }
 }
 
 document.addEventListener('DOMContentLoaded', loadApp);
-if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js')); }
+if ('serviceWorker' in navigator) { 
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('Service Worker registrado con éxito.', reg))
+            .catch(err => console.error('Error registrando el Service Worker:', err));
+    }); 
+}

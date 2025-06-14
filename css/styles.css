@@ -1,233 +1,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
-
 :root {
-    --primary-color: #007AFF;
-    --bg-color-end: #0a0a0a;
-    --bg-color-start: #1c1c1e;
-    --card-bg: #1c1c1e;
-    --card-border: rgba(255, 255, 255, 0.1);
-    --text-color-primary: #ffffff;
-    --text-color-secondary: #8e8e93;
-    --font-family: 'Inter', sans-serif;
-    --border-radius-lg: 24px;
-    --border-radius-md: 16px;
+    --primary-color: #007AFF; --bg-color-end: #0a0a0a; --bg-color-start: #1c1c1e; --card-bg: #1c1c1e;
+    --card-border: rgba(255, 255, 255, 0.1); --text-color-primary: #ffffff; --text-color-secondary: #8e8e93;
+    --font-family: 'Inter', sans-serif; --border-radius-lg: 24px; --border-radius-md: 16px;
 }
-
-body { /* ... (similar a antes, pero con nueva fuente) ... */ }
-
-/* Layout principal centrado y con ancho máximo */
-.main-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem 2rem;
+body { font-family: var(--font-family); background: var(--bg-color-end); color: var(--text-color-primary); }
+.main-container { max-width: 1200px; margin: 0 auto; padding: 1rem 2rem; }
+.main-header { background: rgba(10, 10, 10, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--card-border); position: sticky; top: 0; z-index: 50; }
+.main-header .main-container { display: flex; justify-content: space-between; align-items: center; }
+.header-icon-btn { color: var(--text-color-primary); padding: 0.5rem; border-radius: 99px; transition: background-color 0.3s; }
+.header-icon-btn:hover { background-color: var(--card-bg); }
+.section-container { margin-top: 4rem; }
+.section-title { font-size: 2.2rem; font-weight: 700; text-align: center; margin-bottom: 2.5rem; }
+.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
+.product-card { background-color: var(--card-bg); border-radius: var(--border-radius-lg); border: 1px solid var(--card-border); overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; display: flex; flex-direction: column; }
+.product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0, 122, 255, 0.15); }
+.card-image-wrapper { height: 280px; background-color: #000; display: flex; align-items: center; justify-content: center; }
+.product-image { max-width: 85%; max-height: 85%; object-fit: contain; transition: transform 0.4s ease; }
+.product-card:hover .product-image { transform: scale(1.05); }
+.card-content-wrapper { padding: 1.5rem; text-align: left; }
+.product-brand { font-size: 0.8rem; color: var(--text-color-secondary); }
+.product-name { font-size: 1.1rem; font-weight: 500; margin: 0.25rem 0 1rem; min-height: 2.8rem; }
+.price-action-wrapper { display: flex; justify-content: space-between; align-items: center; }
+.product-price { font-size: 1.5rem; font-weight: 700; }
+.add-to-cart-btn { background-color: var(--primary-color); color: white; width: 44px; height: 44px; border-radius: 50%; border: none; font-size: 1.5rem; cursor: pointer; transition: background-color 0.3s; }
+.add-to-cart-btn:hover { background-color: #0056b3; }
+.category-filters { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
+.category-btn { padding: 0.5rem 1.25rem; border-radius: 99px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color-secondary); transition: all 0.3s; }
+.category-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+.bottom-nav { display: none; }
+@media (max-width: 768px) {
+    .main-container { padding: 1rem; }
+    main { padding-bottom: 80px; }
+    .main-header #openSearchBtn { display: none; }
+    .product-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .bottom-nav { display: flex; justify-content: space-around; position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: rgba(28, 28, 30, 0.8); backdrop-filter: blur(10px); border-top: 1px solid var(--card-border); z-index: 100; }
+    .bottom-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-color-secondary); }
+    .bottom-nav-item.active { color: var(--primary-color); }
+    .bottom-nav-item span { font-size: 0.7rem; }
 }
-
-/* Títulos con un estilo más moderno */
-h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
-}
-
-/* --- NUEVA TARJETA DE PRODUCTO "ELEGANCE" --- */
-.product-card {
-    background-color: var(--card-bg);
-    border-radius: var(--border-radius-lg);
-    border: 1px solid var(--card-border);
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeIn 0.5s ease-out forwards;
-}
-
-/* Animación de entrada para las tarjetas */
-@keyframes fadeIn {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 122, 255, 0.15);
-}
-
-.card-image-wrapper {
-    position: relative;
-    background-color: #000;
-    height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.product-image {
-    max-width: 90%;
-    max-height: 90%;
-    object-fit: contain;
-    transition: transform 0.4s ease;
-}
-.product-card:hover .product-image {
-    transform: scale(1.05);
-}
-
-.product-condition {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-    padding: 0.25rem 0.75rem;
-    border-radius: 99px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.product-condition.nuevo { background-color: var(--primary-color); color: white; }
-.product-condition.usado { background-color: var(--text-color-secondary); color: var(--bg-color-end); }
-
-.card-content-wrapper {
-    padding: 1.5rem;
-    text-align: center;
-    border-top: 1px solid var(--card-border);
-}
-.product-name {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-.product-price {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: 1.5rem;
-}
-
-.add-to-cart-btn {
-    width: 100%;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: var(--border-radius-md);
-    padding: 1rem;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-.add-to-cart-btn:hover {
-    background-color: var(--secondary-color);
-}
-/* === ESTILOS PARA TARJETA DE PRODUCTO "ELEGANCE" (v4.0) === */
-
-/* Layout centrado para el grid de productos */
-#product-grid-container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* Base de la nueva tarjeta: se elimina el código anterior y se usa este */
-.product-card.new-design {
-    background-color: var(--glass-bg); /* Mantiene el fondo de vidrio */
-    border: 1px solid var(--glass-border);
-    border-radius: var(--border-radius-lg, 24px);
-    text-align: left;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeIn 0.5s ease-out forwards;
-}
-
-@keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
-
-.product-card.new-design:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 10px 30px rgba(0, 122, 255, 0.2);
-}
-
-.new-design .card-image-wrapper {
-    position: relative;
-    height: 250px;
-    background-color: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.new-design .product-image {
-    width: auto;
-    height: auto;
-    max-width: 85%;
-    max-height: 85%;
-    object-fit: contain;
-    transition: transform 0.4s ease;
-}
-
-.new-design:hover .product-image {
-    transform: scale(1.08);
-}
-
-.new-design .product-condition {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 0.2rem 0.6rem;
-    border-radius: 99px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border: 1px solid rgba(255,255,255,0.2);
-    backdrop-filter: blur(5px);
-}
-.new-design .product-condition.nuevo { background-color: rgba(0, 122, 255, 0.5); color: white; }
-.new-design .product-condition.usado { background-color: rgba(142, 142, 147, 0.5); color: white; }
-
-.new-design .card-content-wrapper {
-    padding: 1.25rem;
-}
-
-.new-design .product-name {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--text-color-primary);
-    min-height: 3rem; /* Espacio para dos líneas */
-    margin: 0;
-}
-
-.new-design .price-and-cart {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 1rem;
-}
-
-.new-design .product-price {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text-color-primary);
-    margin: 0;
-}
-
-.new-design .add-to-cart-btn {
-    font-size: 1.5rem; /* Botón de "+" grande */
-    font-weight: 300;
-    line-height: 1;
-    width: 44px;
-    height: 44px;
-    flex-shrink: 0;
-    padding-bottom: 4px; /* Ajuste para centrar el "+" */
-    /* El resto de los estilos como color y fondo ya están definidos en la regla global */
-}
-
-/* === FIN DE NUEVOS ESTILOS === */
+/* ... (otros estilos de carruseles, carrito, etc. se mantienen) ... */

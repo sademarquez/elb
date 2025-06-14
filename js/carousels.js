@@ -1,3 +1,5 @@
+// No es necesario importar Swiper, ya está disponible globalmente desde el script en index.html
+
 export function initHeroCarousel(bannersData) {
     const wrapper = document.getElementById('heroSwiperWrapper');
     if (!wrapper || !bannersData || bannersData.length === 0) return;
@@ -13,7 +15,8 @@ export function initHeroCarousel(bannersData) {
     `).join('');
     
     new Swiper('.hero-swiper', {
-        loop: bannersData.length > 1, // CORRECTO: Loop condicional
+        // Esta lógica ya era correcta: el loop se activa solo si hay más de 1 banner.
+        loop: bannersData.length > 1,
         autoplay: {
             delay: 5000,
             disableOnInteraction: false,
@@ -26,10 +29,20 @@ export function initHeroCarousel(bannersData) {
 
 export function initBrandsCarousel(brandsData) {
     const wrapper = document.getElementById('brandsSwiperWrapper');
-    if (!wrapper || !brandsData || brandsData.length === 0) return;
+    // Si no hay marcas o solo hay una, no tiene sentido el carrusel.
+    if (!wrapper || !brandsData || brandsData.length < 2) {
+        const brandsSection = document.getElementById('brands-section');
+        if (brandsSection) brandsSection.style.display = 'none'; // Oculta toda la sección
+        return;
+    }
 
-    wrapper.innerHTML = brandsData.map(brand => `
-        <div class="swiper-slide">
+    // SOLUCIÓN DEFINITIVA: Duplicamos las marcas para darle a Swiper suficientes
+    // slides para que el bucle infinito funcione sin warnings.
+    // Si tienes 4 marcas, ahora crearemos 12 slides en el HTML.
+    const slidesData = [...brandsData, ...brandsData, ...brandsData];
+
+    wrapper.innerHTML = slidesData.map(brand => `
+        <div class="swiper-slide" style="width: auto;"> <!-- style="width: auto;" es clave para slidesPerView: 'auto' -->
             <div class="brand-logo">
                 <img src="${brand.logoUrl}" alt="${brand.name}" loading="lazy">
             </div>
@@ -40,13 +53,14 @@ export function initBrandsCarousel(brandsData) {
         slidesPerView: 'auto',
         spaceBetween: 60,
         loop: true,
-        freeMode: true, // Permite el deslizamiento libre
+        freeMode: true, // Permite el deslizamiento libre y continuo
         autoplay: {
-            delay: 0, // Inicia inmediatamente
+            delay: 1, // Usar 1 en lugar de 0 para máxima compatibilidad
             disableOnInteraction: false,
+            pauseOnMouseEnter: true, // Una buena práctica de UX, el carrusel se pausa al pasar el mouse
         },
-        speed: 8000, // Duración de la animación de un extremo a otro
-        allowTouchMove: false, // El usuario no puede detenerlo
+        speed: 8000, // Velocidad del desplazamiento
         grabCursor: false,
+        allowTouchMove: true,
     });
 }

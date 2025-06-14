@@ -8,12 +8,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <link rel="stylesheet" href="/css/styles.css"/>
+    <link rel="icon" href="/images/favicon.png" type="image/png">
+    <link rel="manifest" href="/manifest.json">
 </head>
 <body>
-    <!-- NUEVO: Contenedor para el fondo animado -->
+    <!-- CONTENEDOR PARA EL FONDO ANIMADO -->
     <div id="animated-bg"></div>
 
-    <header id="mainHeader" class="main-header fixed top-0 left-0 right-0 z-50 p-6 transition-all duration-300">
+    <header id="mainHeader" class="main-header fixed top-0 left-0 right-0 z-40 p-6 transition-all duration-300">
         <div class="container mx-auto flex justify-between items-center">
             <a href="/"><img id="headerLogo" src="/images/logo_luna.png" alt="Comunicaciones Luna" class="h-10 transition-all duration-300"></a>
             <button id="openSearchBtn" aria-label="Abrir búsqueda" class="p-2 rounded-full hover:bg-white/20">
@@ -22,43 +24,38 @@
         </div>
     </header>
 
-    <main class="relative z-10"> <!-- Añadido z-index para asegurar que el contenido esté sobre el fondo -->
-        <!-- Estructura restaurada a la versión estable (MASTER) -->
-        <section id="hero-section" class="pt-28 pb-8"> <!-- Padding para header flotante -->
-            <div class="container mx-auto">
+    <!-- El contenido principal va en un wrapper para el z-index -->
+    <div class="relative z-10">
+        <main class="container mx-auto p-4 pt-32"> <!-- Padding-top para dejar espacio al header flotante -->
+            <section id="hero-section" class="mb-12">
                 <div class="swiper hero-swiper">
                     <div class="swiper-wrapper" id="heroSwiperWrapper"></div>
                     <div class="swiper-pagination"></div>
                     <div class="swiper-button-next"></div>
                     <div class="swiper-button-prev"></div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="brands-section" class="my-12">
-            <h2 class="text-2xl font-bold mb-6 text-center text-text-color-secondary">Marcas que Manejamos</h2>
-             <div class="container mx-auto">
+            <section id="brands-section" class="my-16">
+                <h2 class="text-2xl font-bold mb-6 text-center text-text-color-secondary">Marcas que Manejamos</h2>
                 <div class="swiper brands-swiper">
                     <div class="swiper-wrapper" id="brandsSwiperWrapper"></div>
-                 </div>
-             </div>
-        </section>
-        
-        <div class="container mx-auto p-4">
+                </div>
+            </section>
+            
             <section id="category-section" class="py-12">
                 <h2 class="text-4xl font-bold mb-6 text-center">Nuestro Catálogo</h2>
                 <div id="category-filters" class="flex gap-3 justify-center items-center flex-wrap mb-8"></div>
                 <div id="product-grid-container" class="product-grid"></div>
             </section>
-        </div>
-    </main>
+        </main>
+    </div>
     
-    <!-- (Resto de elementos no cambian) -->
     <aside id="cartSidebar" class="cart-sidebar"></aside>
-    <div id="searchModal" class="..."><!-- ... --></div>
+    <div id="searchModal" class="fixed inset-0 ..."></div>
     <nav class="bottom-nav"></nav>
 
-    <!-- Librerías de partículas y Swiper ANTES de main.js -->
+    <!-- LIBRERÍAS DE PARTÍCULAS Y SWIPER -->
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script type="module" src="/js/main.js"></script>

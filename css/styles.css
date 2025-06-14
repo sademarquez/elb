@@ -127,3 +127,107 @@ h2 {
 .add-to-cart-btn:hover {
     background-color: var(--secondary-color);
 }
+/* === ESTILOS PARA TARJETA DE PRODUCTO "ELEGANCE" (v4.0) === */
+
+/* Layout centrado para el grid de productos */
+#product-grid-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Base de la nueva tarjeta: se elimina el código anterior y se usa este */
+.product-card.new-design {
+    background-color: var(--glass-bg); /* Mantiene el fondo de vidrio */
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg, 24px);
+    text-align: left;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+
+.product-card.new-design:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(0, 122, 255, 0.2);
+}
+
+.new-design .card-image-wrapper {
+    position: relative;
+    height: 250px;
+    background-color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.new-design .product-image {
+    width: auto;
+    height: auto;
+    max-width: 85%;
+    max-height: 85%;
+    object-fit: contain;
+    transition: transform 0.4s ease;
+}
+
+.new-design:hover .product-image {
+    transform: scale(1.08);
+}
+
+.new-design .product-condition {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(5px);
+}
+.new-design .product-condition.nuevo { background-color: rgba(0, 122, 255, 0.5); color: white; }
+.new-design .product-condition.usado { background-color: rgba(142, 142, 147, 0.5); color: white; }
+
+.new-design .card-content-wrapper {
+    padding: 1.25rem;
+}
+
+.new-design .product-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-color-primary);
+    min-height: 3rem; /* Espacio para dos líneas */
+    margin: 0;
+}
+
+.new-design .price-and-cart {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.new-design .product-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color-primary);
+    margin: 0;
+}
+
+.new-design .add-to-cart-btn {
+    font-size: 1.5rem; /* Botón de "+" grande */
+    font-weight: 300;
+    line-height: 1;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    padding-bottom: 4px; /* Ajuste para centrar el "+" */
+    /* El resto de los estilos como color y fondo ya están definidos en la regla global */
+}
+
+/* === FIN DE NUEVOS ESTILOS === */

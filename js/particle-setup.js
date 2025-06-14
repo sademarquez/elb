@@ -1,35 +1,66 @@
-// Se elimina la palabra 'export'. Ahora es una función normal.
 function initParticles() {
+    // Reemplaza esto con tu configuración de partículas real si es diferente.
     tsParticles.load("tsparticles", {
-        // ... (Aquí va toda tu configuración de partículas, no la cambiaré)
-        // Por ejemplo:
-        fpsLimit: 60,
-        particles: {
-            number: { value: 50 },
-            color: { value: "#007aff" },
-            shape: { type: "circle" },
-            opacity: { value: 0.5, random: true },
-            size: { value: 3, random: true },
-            move: {
-                enable: true,
-                speed: 1,
-                direction: "none",
-                out_mode: "out"
-            }
-        },
+        fpsLimit: 120,
         interactivity: {
             events: {
-                onhover: { enable: true, mode: "repulse" },
-                onclick: { enable: true, mode: "push" }
+                onHover: {
+                    enable: true,
+                    mode: "repulse",
+                },
+                resize: true,
             },
             modes: {
-                repulse: { distance: 100 },
-                push: { particles_nb: 4 }
-            }
+                repulse: {
+                    distance: 100,
+                    duration: 0.4,
+                },
+            },
         },
-        detectRetina: true
+        particles: {
+            color: {
+                value: "#007aff",
+            },
+            links: {
+                color: "#007aff",
+                distance: 150,
+                enable: true,
+                opacity: 0.2,
+                width: 1,
+            },
+            collisions: {
+                enable: true,
+            },
+            move: {
+                direction: "none",
+                enable: true,
+                outModes: {
+                    default: "bounce",
+                },
+                random: false,
+                speed: 1,
+                straight: false,
+            },
+            number: {
+                density: {
+                    enable: true,
+                    area: 800,
+                },
+                value: 80,
+            },
+            opacity: {
+                value: 0.2,
+            },
+            shape: {
+                type: "circle",
+            },
+            size: {
+                value: { min: 1, max: 5 },
+            },
+        },
+        detectRetina: true,
     });
 }
 
-// Llamamos a la función directamente para que se ejecute cuando se cargue el script.
+// Ejecutar la función cuando el script se cargue
 initParticles();

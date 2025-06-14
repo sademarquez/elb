@@ -1,23 +1,38 @@
-const STATIC_CACHE_NAME = 'comunicaciones-luna-static-v1';
-const DYNAMIC_CACHE_NAME = 'comunicaciones-luna-dynamic-v1';
-// CORRECCIÓN: APP_SHELL más mínimo y seguro.
+const STATIC_CACHE_NAME = 'luna-static-v2'; // Nueva versión
+const DYNAMIC_CACHE_NAME = 'luna-dynamic-v2';
+// Hacemos el App Shell mínimo para evitar fallos de instalación
 const APP_SHELL = [
   '/',
   '/index.html',
   '/manifest.json',
   '/css/styles.css',
   '/js/main.js'
-  // No incluimos iconos aquí, ya que si fallan, rompen toda la instalación del SW.
-  // El navegador los cacheará por su cuenta si se usan.
 ];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(STATIC_CACHE_NAME).then(c => {
-    console.log('SW: Cacheando App Shell mínimo');
     return c.addAll(APP_SHELL);
-  }).catch(err => {
-    console.error('Fallo en cache.addAll:', err);
   }));
 });
 
-// ... (El resto de sw.js no cambia)
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => {
+    return Promise.all(keys.filter(key => key !== STATIC_CACHE_NAME && key !== DYNAMIC_CACHE_NAME).map(key => caches.delete(key)));
+  }));
+});
+
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    fetch(e.request).then(networkResponse => {
+      return caches.open(DYNAMIC_CACHE_NAME).then(cache => {
+        // No cachear la función de Netlify para tener siempre datos frescos
+        if (!e.request.url.includes('/api/')) {
+          cache.put(e.request, networkResponse.clone());
+        }
+        return networkResponse;
+      });
+    }).catch(() => {
+      return caches.match(e.request);
+    })
+  );
+});

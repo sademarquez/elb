@@ -40,3 +40,52 @@ body { font-family: var(--font-family); background: var(--bg-color-end); color: 
     .bottom-nav-item span { font-size: 0.7rem; }
 }
 /* ... (otros estilos de carruseles, carrito, etc. se mantienen) ... */
+/* ... (todo el CSS anterior se mantiene) ... */
+
+/* --- ESTILOS PARA SKELETON LOADING --- */
+.skeleton-card .skeleton {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+.skeleton-card .card-image-wrapper.skeleton { height: 280px; }
+.skeleton-card .skeleton-text { height: 1.2rem; margin-bottom: 0.5rem; }
+
+
+/* --- ESTILOS PARA FILTRADO CON ANIMACIÓN --- */
+.product-card {
+    /* ... (estilos existentes) ... */
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.product-card.hidden-by-filter {
+    opacity: 0;
+    transform: scale(0.95);
+    /* Hacemos que no ocupe espacio para que el layout se reajuste */
+    /* Usamos un timeout en JS para aplicar display: none después de la animación si es necesario,
+       pero por ahora, esto es visualmente suficiente y más simple. */
+    height: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    gap: 0;
+}
+
+
+/* --- ESTILOS PARA MICRO-INTERACCIÓN DEL BOTÓN --- */
+.add-to-cart-btn {
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.3s, transform 0.3s;
+}
+.add-to-cart-btn.adding-to-cart {
+    background-color: var(--accent-color); /* Verde de éxito */
+    transform: scale(1.1);
+}
+.add-to-cart-btn svg {
+    transition: opacity 0.3s;
+}

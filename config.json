@@ -1,31 +1,15 @@
 {
     "siteName": "Comunicaciones Luna",
     "contactEmail": "soporte@comunicacionesluna.com",
-    "contactPhone": "573174144815",
+    "contactPhone": "573001234567",
     "address": "Santander de Quilichao, Cauca, Colombia",
     "banners": [
-        {
-            "id": "banner1",
-            "title": "¡Renueva tu Celular Hoy!",
-            "description": "Descubre las mejores ofertas en equipos Apple, Samsung y más.",
-            "imageUrl": "https://i.imgur.com/s1ZzG5O.jpg",
-            "link": "#",
-            "buttonText": "Ver Celulares"
-        },
-        {
-            "id": "banner2",
-            "title": "Servicio Técnico Profesional",
-            "description": "¿Pantalla rota? ¿Batería agotada? ¡Nosotros lo solucionamos!",
-            "imageUrl": "https://i.imgur.com/tHq4R7m.jpg",
-            "link": "#",
-            "buttonText": "Reparar mi Celular"
-        }
+        { "id": "banner1", "title": "iPhone 15 Pro", "description": "Titanio. Tan robusto. Tan ligero. Tan Pro.", "imageUrl": "https://i.imgur.com/s1ZzG5O.jpg", "link": "#", "buttonText": "Ver Oferta" },
+        { "id": "banner2", "title": "Servicio Técnico Express", "description": "¿Pantalla rota? La reparamos en menos de 1 hora.", "imageUrl": "https://i.imgur.com/tHq4R7m.jpg", "link": "#", "buttonText": "Agendar Cita" }
     ],
     "brands": [
-        { "name": "Apple", "logoUrl": "https://i.imgur.com/dJtVpSj.png" },
-        { "name": "Samsung", "logoUrl": "https://i.imgur.com/4qK9eS7.png" },
-        { "name": "Xiaomi", "logoUrl": "https://i.imgur.com/5Vl9RzR.png" },
-        { "name": "Motorola", "logoUrl": "https://i.imgur.com/m5R3j2y.png" },
+        { "name": "Apple", "logoUrl": "https://i.imgur.com/dJtVpSj.png" }, { "name": "Samsung", "logoUrl": "https://i.imgur.com/4qK9eS7.png" },
+        { "name": "Xiaomi", "logoUrl": "https://i.imgur.com/5Vl9RzR.png" }, { "name": "Motorola", "logoUrl": "https://i.imgur.com/m5R3j2y.png" },
         { "name": "Anker", "logoUrl": "https://i.imgur.com/Qj4S3dD.png" }
     ]
 }

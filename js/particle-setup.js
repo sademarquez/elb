@@ -1,63 +1,68 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="siteTitle">Comunicaciones Luna</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
-    <link rel="stylesheet" href="/css/styles.css"/>
-    <link rel="icon" href="/images/favicon.png" type="image/png">
-    <link rel="manifest" href="/manifest.json">
-</head>
-<body>
-    <!-- CONTENEDOR PARA EL FONDO ANIMADO -->
-    <div id="animated-bg"></div>
+export function initParticles() {
+    // tsParticles es una variable global cargada desde el CDN, por eso no se importa.
+    if (typeof tsParticles === 'undefined') {
+        console.error('tsParticles no está cargado. Asegúrate de que el script CDN esté en index.html ANTES de main.js');
+        return;
+    }
 
-    <header id="mainHeader" class="main-header fixed top-0 left-0 right-0 z-40 p-6 transition-all duration-300">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="/"><img id="headerLogo" src="/images/logo_luna.png" alt="Comunicaciones Luna" class="h-10 transition-all duration-300"></a>
-            <button id="openSearchBtn" aria-label="Abrir búsqueda" class="p-2 rounded-full hover:bg-white/20">
-                <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-            </button>
-        </div>
-    </header>
-
-    <!-- El contenido principal va en un wrapper para el z-index -->
-    <div class="relative z-10">
-        <main class="container mx-auto p-4 pt-32"> <!-- Padding-top para dejar espacio al header flotante -->
-            <section id="hero-section" class="mb-12">
-                <div class="swiper hero-swiper">
-                    <div class="swiper-wrapper" id="heroSwiperWrapper"></div>
-                    <div class="swiper-pagination"></div>
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
-                </div>
-            </section>
-
-            <section id="brands-section" class="my-16">
-                <h2 class="text-2xl font-bold mb-6 text-center text-text-color-secondary">Marcas que Manejamos</h2>
-                <div class="swiper brands-swiper">
-                    <div class="swiper-wrapper" id="brandsSwiperWrapper"></div>
-                </div>
-            </section>
-            
-            <section id="category-section" class="py-12">
-                <h2 class="text-4xl font-bold mb-6 text-center">Nuestro Catálogo</h2>
-                <div id="category-filters" class="flex gap-3 justify-center items-center flex-wrap mb-8"></div>
-                <div id="product-grid-container" class="product-grid"></div>
-            </section>
-        </main>
-    </div>
-    
-    <aside id="cartSidebar" class="cart-sidebar"></aside>
-    <div id="searchModal" class="fixed inset-0 ..."></div>
-    <nav class="bottom-nav"></nav>
-
-    <!-- LIBRERÍAS DE PARTÍCULAS Y SWIPER -->
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script type="module" src="/js/main.js"></script>
-</body>
-</html>
+    tsParticles.load("animated-bg", {
+        fpsLimit: 60,
+        particles: {
+            number: {
+                value: 80,
+                density: {
+                    enable: true,
+                    value_area: 800,
+                },
+            },
+            color: {
+                value: "#007AFF", // Color primario de "Comunicaciones Luna"
+            },
+            shape: {
+                type: "circle",
+            },
+            opacity: {
+                value: 0.6,
+                random: true,
+                anim: {
+                    enable: true,
+                    speed: 0.8,
+                    opacity_min: 0.1,
+                    sync: false,
+                },
+            },
+            size: {
+                value: 2.5,
+                random: true,
+                anim: {
+                    enable: false,
+                },
+            },
+            move: {
+                enable: true,
+                speed: 1.5,
+                direction: "none", // Se mueven en direcciones aleatorias
+                random: true,
+                straight: false,
+                out_mode: "out",
+                bounce: false,
+            },
+        },
+        interactivity: {
+            detect_on: "canvas",
+            events: {
+                onhover: {
+                    enable: false,
+                },
+                onclick: {
+                    enable: false,
+                },
+                resize: true,
+            },
+        },
+        retina_detect: true,
+        background: {
+            color: "#000000",
+        },
+    });
+}

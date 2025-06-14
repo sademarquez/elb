@@ -1,5 +1,5 @@
 export const appState = {
-    products: [],
     config: {},
-    cart: [] 
+    products: [],
+    cart: [],
 };
